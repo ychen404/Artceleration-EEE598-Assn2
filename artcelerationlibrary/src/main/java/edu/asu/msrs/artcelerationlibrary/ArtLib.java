@@ -82,7 +82,7 @@ public class ArtLib {
     }
     // Function: requestTransform to the activity
     // Input: Bitmap image
-    //  Output: ture
+    //  Output: Boolean result
     public boolean requestTransform(Bitmap img, int index, int[] intArgs, float[] floatArgs){
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -120,9 +120,9 @@ public class ArtLib {
         }
         return true;
     }
-    // Function: fromService: get message from service
+    // Function: get message from service (work in progress)
     // Input: message
-    //  Output: From Service
+    //  Output:
     public void fromService(Message msg) {
 
         Bundle fromService = msg.getData();

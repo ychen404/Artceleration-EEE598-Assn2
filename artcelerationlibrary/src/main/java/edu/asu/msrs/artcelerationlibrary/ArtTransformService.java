@@ -39,8 +39,8 @@ public class ArtTransformService extends Service {
         @Override
 
         // Function: handleMessage sent from ArtLib
-        // Input: Message
-        //  Output: case1: Hello; case2: MULT
+        // Input: Message.
+        //  Output: receive data from library
         public void handleMessage(Message msg){
             Log.d(TAG, "handleMessage(msg)"+ msg.what);
             switch (msg.what) {
