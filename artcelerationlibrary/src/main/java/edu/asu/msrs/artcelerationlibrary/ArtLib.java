@@ -15,6 +15,8 @@ import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
 import android.util.Log;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
@@ -33,6 +35,7 @@ public class ArtLib {
 
 
     private Messenger mMessenger;
+    private Messenger mService;
     private boolean mBound;
     ServiceConnection mServiceConnection = new ServiceConnection(){
 
@@ -40,7 +43,7 @@ public class ArtLib {
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             mMessenger = new Messenger(service);
             mBound = true;
-            Log.v("test","vonnected");
+            Log.v("test","Connected");
 
         }
 
@@ -68,10 +71,21 @@ public class ArtLib {
         return transforms;
     }
 
-    public void registerHandler(TransformHandler artlistener){this.artlistener=artlistener;}
+    //Function: RegisterHandler to artLib
+    //Input: transformHandler
+    //Output: null
+
+    public void registerHandler(TransformHandler artlistener){
+        this.artlistener=artlistener;
+     //   artlistener.onTransformProcessed();
+
+    }
 
     public boolean requestTransform(Bitmap img, int index, int[] intArgs, float[] floatArgs){
 
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        img.compress(Bitmap.CompressFormat.PNG, 100, out);
+        //byte[] bytes = out.toByteArray();
         byte[] bytes = "testString".getBytes();
         try {
             MemoryFile memFile = new MemoryFile("somename", bytes.length);
@@ -85,7 +99,12 @@ public class ArtLib {
             dataBundle.putParcelable("pfd", pfd);
 
             Message msg = Message.obtain(null,what,2,3);
+            mService = msg.replyTo;
             msg.setData(dataBundle);
+            fromService(msg);
+
+            memFile.close();
+
 
         try {
             if(mMessenger == null)
@@ -99,5 +118,23 @@ public class ArtLib {
         }
         return true;
     }
+
+    public void fromService(Message msg) {
+
+        Bundle fromService = msg.getData();
+        ParcelFileDescriptor pfd_from_ser = (ParcelFileDescriptor) fromService.get("pfd_from_ser");
+        FileInputStream fios = new FileInputStream(pfd_from_ser.getFileDescriptor());
+        String fromSerTest = null;
+        try {
+            fromSerTest = String.valueOf(fios.read());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.d("From Service", fromSerTest);
+
+    }
+
+
+
 
 }
