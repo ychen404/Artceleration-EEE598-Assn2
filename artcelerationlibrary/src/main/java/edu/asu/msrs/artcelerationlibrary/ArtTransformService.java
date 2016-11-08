@@ -32,16 +32,15 @@ public class ArtTransformService extends Service {
     String TAG = "ArtTransformService";
     static final int MSG_HELLO = 1;
     static final int MSG_MULT = 2;
-  //  private Messenger mClients;
 
-
-    //
-  //  ArrayList<Messenger> mClients = new ArrayList<Messenger>();
 
 
     class ArtTransformHandler extends Handler{
         @Override
 
+        // Function: handleMessage sent from ArtLib
+        // Input: Message
+        //  Output: case1: Hello; case2: MULT
         public void handleMessage(Message msg){
             Log.d(TAG, "handleMessage(msg)"+ msg.what);
             switch (msg.what) {
@@ -61,8 +60,8 @@ public class ArtTransformService extends Service {
                     }
 
                         Log.d(TAG,testPfd );
-             //           int result = msg.arg1 * msg.arg2;
-             //           Log.d(TAG, "MULT " + result);
+                           int result = msg.arg1 * msg.arg2;
+                    Log.d(TAG, "MULT " + result);
 
                     break;
                 default:
@@ -77,6 +76,9 @@ public class ArtTransformService extends Service {
     class ServiceToClient extends Handler{
         @Override
 
+        // Function: handleMessage
+        // Input: message
+        //  Output: send processed img to ArtLib using memoryfile
         public void handleMessage(Message msg){
     //        Log.d(TAG, "ToServicehandleMessage(msg)"+ msg.what);
 
