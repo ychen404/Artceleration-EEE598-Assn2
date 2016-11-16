@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.MemoryFile;
 import android.os.Message;
@@ -34,7 +35,7 @@ public class ArtLib {
 
 
 
-    private Messenger mMessenger;
+    private Messenger mMessenger = null;
     private Messenger mService;
     private boolean mBound;
     ServiceConnection mServiceConnection = new ServiceConnection(){
@@ -44,6 +45,11 @@ public class ArtLib {
             mMessenger = new Messenger(service);
             mBound = true;
             Log.v("test","Connected");
+
+
+            Message msg  = Message.obtain(null, ArtTransformService.MSG_MULT);
+            msg.replyTo = mReceive;
+
 
         }
 
@@ -80,6 +86,27 @@ public class ArtLib {
      //   artlistener.onTransformProcessed();
 
     }
+
+    class ProcessedImgHandler extends Handler{
+        @Override
+        public void handleMessage(Message msg) {
+            Log.d("ArtLib","MULT: "+ msg.what);
+
+            switch (msg.what){
+                case ArtTransformService.MSG_MULT:
+                    int result = msg.what;
+                    Log.d("ArtLib","MULT: "+ result);
+                case 10:
+                    int result_1 = msg.what;
+                    Log.d("ArtLib","MULT: "+ result_1);
+                    break;
+                    default:
+                        break;
+            }
+        }
+    }
+
+    final Messenger mReceive = new Messenger(new ProcessedImgHandler());
     // Function: requestTransform to the activity
     // Input: Bitmap image
     //  Output: Boolean result
@@ -101,9 +128,9 @@ public class ArtLib {
             dataBundle.putParcelable("pfd", pfd);
 
             Message msg = Message.obtain(null,what,2,3);
-            mService = msg.replyTo;
+            msg.replyTo = mReceive;
             msg.setData(dataBundle);
-            fromService(msg);
+            //fromService(msg);
 
             memFile.close();
 
@@ -123,19 +150,22 @@ public class ArtLib {
     // Function: get message from service (work in progress)
     // Input: message
     //  Output:
-    public void fromService(Message msg) {
 
-        Bundle fromService = msg.getData();
-        ParcelFileDescriptor pfd_from_ser = (ParcelFileDescriptor) fromService.get("pfd_from_ser");
-        FileInputStream fios = new FileInputStream(pfd_from_ser.getFileDescriptor());
-        String fromSerTest = null;
-        try {
-            fromSerTest = String.valueOf(fios.read());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Log.d("From Service", fromSerTest);
 
-    }
+
+//    public void fromService(Message msg) {
+//
+//        Bundle fromService = msg.getData();
+//        ParcelFileDescriptor pfd_from_ser = (ParcelFileDescriptor) fromService.get("pfd_from_ser");
+//        FileInputStream fios = new FileInputStream(pfd_from_ser.getFileDescriptor());
+//        String fromSerTest = null;
+//        try {
+//            fromSerTest = String.valueOf(fios.read());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        Log.d("From Service", fromSerTest);
+//
+//    }
 
 }

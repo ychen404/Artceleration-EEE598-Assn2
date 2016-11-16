@@ -11,6 +11,7 @@ import android.os.MemoryFile;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.ParcelFileDescriptor;
+import android.os.RemoteException;
 import android.util.Log;
 
 import java.io.ByteArrayInputStream;
@@ -32,6 +33,8 @@ public class ArtTransformService extends Service {
     String TAG = "ArtTransformService";
     static final int MSG_HELLO = 1;
     static final int MSG_MULT = 2;
+    static final int transform =3;
+    private Messenger messenger_2;
 
 
 
@@ -46,6 +49,12 @@ public class ArtTransformService extends Service {
             switch (msg.what) {
                 case MSG_HELLO:
                     Log.d(TAG, "HELLO");
+                    messenger_2 = msg.replyTo;
+                    try{
+                        messenger_2.send(Message.obtain(null,10,0,0));
+                    }catch (RemoteException e){
+                        e.printStackTrace();
+                    }
                     break;
                 case MSG_MULT:
                     Bundle dataBundle = msg.getData();
@@ -60,10 +69,18 @@ public class ArtTransformService extends Service {
                     }
 
                         Log.d(TAG,testPfd );
-                           int result = msg.arg1 * msg.arg2;
-                    Log.d(TAG, "MULT " + result);
+                   //        int result = msg.arg1 * msg.arg2;
+                   // Log.d(TAG, "MULT " + result);
+                    messenger_2 = msg.replyTo;
 
+
+                try {
+                    messenger_2.send(Message.obtain(null,10,0,0));
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
                     break;
+                case transform:
                 default:
                     break;
             }
@@ -73,40 +90,39 @@ public class ArtTransformService extends Service {
     }
 
 
-    class ServiceToClient extends Handler{
-        @Override
+//    class ServiceToClient extends Handler{
+//        @Override
 
         // Function: handleMessage
         // Input: message
         //  Output: send processed img to ArtLib using memoryfile
-        public void handleMessage(Message msg){
-    //        Log.d(TAG, "ToServicehandleMessage(msg)"+ msg.what);
+//        public void handleMessage(Message msg){
+//    //        Log.d(TAG, "ToServicehandleMessage(msg)"+ msg.what);
+//
+//
+//                    byte[] ser = "Service_return".getBytes();
+//                    MemoryFile memFile_1;
+//                    try {
+//                        memFile_1 = new MemoryFile("service", ser.length);
+//                        memFile_1.allowPurging(true); //
+//                        memFile_1.writeBytes(ser, 0, 0, ser.length);
+//                        ParcelFileDescriptor pfd_from_ser = null;
+//                        pfd_from_ser = MemoryFileUtil.getParcelFileDescriptor(memFile_1);
+//                        Bundle toClient = new Bundle();
+//                        toClient.putParcelable("pfd_from_ser", pfd_from_ser);
+//                        msg = Message.obtain(null,1);
+//                        msg.setData(toClient);
+//                        memFile_1.close();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//            }
 
-
-                    byte[] ser = "Service_return".getBytes();
-                    MemoryFile memFile_1;
-                    try {
-                        memFile_1 = new MemoryFile("service", ser.length);
-                        memFile_1.allowPurging(true); //
-                        memFile_1.writeBytes(ser, 0, 0, ser.length);
-                        ParcelFileDescriptor pfd_from_ser = null;
-                        pfd_from_ser = MemoryFileUtil.getParcelFileDescriptor(memFile_1);
-                        Bundle toClient = new Bundle();
-                        toClient.putParcelable("pfd_from_ser", pfd_from_ser);
-                        msg = Message.obtain(null,1);
-                        msg.setData(toClient);
-                        memFile_1.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-            }
-
-        }
-
+       //}
 
     final Messenger mMessenger = new Messenger(new ArtTransformHandler());
-    final Messenger mClients = new Messenger(new ServiceToClient());
+    //final Messenger mClients = new Messenger(new ServiceToClient());
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
