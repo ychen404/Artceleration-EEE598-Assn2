@@ -83,7 +83,6 @@ public class ArtLib {
 
     public void registerHandler(TransformHandler artlistener){
         this.artlistener=artlistener;
-     //   artlistener.onTransformProcessed();
 
     }
 
@@ -133,6 +132,8 @@ public class ArtLib {
             //fromService(msg);
 
             memFile.close();
+
+            //   artlistener.onTransformProcessed(img);
 
 
         try {

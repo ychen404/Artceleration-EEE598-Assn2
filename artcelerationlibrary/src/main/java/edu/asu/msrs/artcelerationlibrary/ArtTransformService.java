@@ -1,10 +1,12 @@
 package edu.asu.msrs.artcelerationlibrary;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.MemoryFile;
@@ -16,9 +18,15 @@ import android.util.Log;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
+
 
 public class ArtTransformService extends Service {
 
@@ -60,25 +68,20 @@ public class ArtTransformService extends Service {
                     Bundle dataBundle = msg.getData();
                     ParcelFileDescriptor pfd = (ParcelFileDescriptor) dataBundle.get("pfd");
                     FileInputStream fios = new FileInputStream(pfd.getFileDescriptor());
-                    String testPfd = null;
+                    //String testPfd = null;
+                    //Log.d(TAG, "test"+"abc");
+                    // StringBuffer fileContent = new StringBuffer("");
+                    //  byte[] buffer_fromService = new byte[1024];
 
-                    try {
-                        testPfd = String.valueOf(fios.read());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                   // compare(readFully(fios));
 
-                        Log.d(TAG,testPfd );
-                   //        int result = msg.arg1 * msg.arg2;
-                   // Log.d(TAG, "MULT " + result);
                     messenger_2 = msg.replyTo;
 
-
-                try {
-                    messenger_2.send(Message.obtain(null,10,0,0));
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
+                    try {
+                        messenger_2.send(Message.obtain(null,10,0,0));
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
                     break;
                 case transform:
                 default:
@@ -89,44 +92,46 @@ public class ArtTransformService extends Service {
 
     }
 
+    private void compare(byte[] in){
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        opts.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        Bitmap src_img = BitmapFactory.decodeResource(getResources(), R.drawable.asuhayden, opts);
+        ByteBuffer buff = ByteBuffer.allocate(src_img.getByteCount());
+        src_img.copyPixelsToBuffer(buff);
+        boolean same = Arrays.equals(buff.array(), in);
+        Log.d(TAG, "Same: " + same);
+    }
 
-//    class ServiceToClient extends Handler{
-//        @Override
 
-        // Function: handleMessage
-        // Input: message
-        //  Output: send processed img to ArtLib using memoryfile
-//        public void handleMessage(Message msg){
-//    //        Log.d(TAG, "ToServicehandleMessage(msg)"+ msg.what);
-//
-//
-//                    byte[] ser = "Service_return".getBytes();
-//                    MemoryFile memFile_1;
-//                    try {
-//                        memFile_1 = new MemoryFile("service", ser.length);
-//                        memFile_1.allowPurging(true); //
-//                        memFile_1.writeBytes(ser, 0, 0, ser.length);
-//                        ParcelFileDescriptor pfd_from_ser = null;
-//                        pfd_from_ser = MemoryFileUtil.getParcelFileDescriptor(memFile_1);
-//                        Bundle toClient = new Bundle();
-//                        toClient.putParcelable("pfd_from_ser", pfd_from_ser);
-//                        msg = Message.obtain(null,1);
-//                        msg.setData(toClient);
-//                        memFile_1.close();
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//
-//            }
+    public static byte[] readFully(FileInputStream input)
+    {
+        byte[] byteArray = null;
+        try
+        {
+            //          InputStream inputStream = new FileInputStream(f);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            byte[] b = new byte[1024*8];
+            int bytesRead =0;
 
-       //}
+            while ((bytesRead = input.read(b)) != -1)
+            {
+                bos.write(b, 0, bytesRead);
+            }
+
+            byteArray = bos.toByteArray();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        return byteArray;
+    }
+
 
     final Messenger mMessenger = new Messenger(new ArtTransformHandler());
-    //final Messenger mClients = new Messenger(new ServiceToClient());
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
-       // throw new UnsupportedOperationException("Not yet implemented");
         return mMessenger.getBinder();
     }
 }
