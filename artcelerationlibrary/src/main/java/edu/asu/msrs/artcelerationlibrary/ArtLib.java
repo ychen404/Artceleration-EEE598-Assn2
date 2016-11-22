@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -28,10 +29,13 @@ public class ArtLib {
     private TransformHandler artlistener;
     private Activity mActivity;
 
+
     public ArtLib(Activity activity) {
         mActivity = activity;
         init();
     }
+
+
 
 
 
@@ -96,8 +100,20 @@ public class ArtLib {
                     int result = msg.what;
                     Log.d("ArtLib","MULT: "+ result);
                 case 10:
-                    int result_1 = msg.what;
-                    Log.d("ArtLib","MULT: "+ result_1);
+                    Bundle retBundle = msg.getData();
+                    if (msg.getData() == null){
+                        Log.d("getData","null");
+                        return;
+                    }
+                    else {
+                        ParcelFileDescriptor pfd_ret = (ParcelFileDescriptor) retBundle.get("pfd_ret");
+                        FileInputStream fios_ret = new FileInputStream(pfd_ret.getFileDescriptor());
+
+                        Bitmap procImg = toBitmap(readProcessed(fios_ret));
+                        artlistener.onTransformProcessed(procImg);
+                     //    int result_1 = msg.what;
+                     //    Log.d("ArtLib","MULT: "+ result_1);
+                    }
                     break;
                     default:
                         break;
@@ -106,6 +122,7 @@ public class ArtLib {
     }
 
     final Messenger mReceive = new Messenger(new ProcessedImgHandler());
+
     // Function: requestTransform to the activity
     // Input: Bitmap image
     //  Output: Boolean result
@@ -113,8 +130,8 @@ public class ArtLib {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         img.compress(Bitmap.CompressFormat.PNG, 100, out);
-        //byte[] bytes = out.toByteArray();
-        byte[] bytes = "testString".getBytes();
+        byte[] bytes = out.toByteArray();
+//        byte[] bytes = "testString".getBytes();
         try {
             MemoryFile memFile = new MemoryFile("somename", bytes.length);
             memFile.allowPurging(true); //
@@ -129,11 +146,7 @@ public class ArtLib {
             Message msg = Message.obtain(null,what,2,3);
             msg.replyTo = mReceive;
             msg.setData(dataBundle);
-            //fromService(msg);
-
             memFile.close();
-
-            //   artlistener.onTransformProcessed(img);
 
 
         try {
@@ -148,25 +161,36 @@ public class ArtLib {
         }
         return true;
     }
-    // Function: get message from service (work in progress)
-    // Input: message
-    //  Output:
 
 
+    public static byte[] readProcessed(FileInputStream input)
+    {
+        byte[] byteArray = null;
+        try
+        {
+            //InputStream inputStream = new FileInputStream(f);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            byte[] b = new byte[1024*8];
+            int bytesRead =0;
 
-//    public void fromService(Message msg) {
-//
-//        Bundle fromService = msg.getData();
-//        ParcelFileDescriptor pfd_from_ser = (ParcelFileDescriptor) fromService.get("pfd_from_ser");
-//        FileInputStream fios = new FileInputStream(pfd_from_ser.getFileDescriptor());
-//        String fromSerTest = null;
-//        try {
-//            fromSerTest = String.valueOf(fios.read());
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        Log.d("From Service", fromSerTest);
-//
-//    }
+            while ((bytesRead = input.read(b)) != -1)
+            {
+                bos.write(b, 0, bytesRead);
+            }
+
+            byteArray = bos.toByteArray();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        return byteArray;
+    }
+
+    public Bitmap toBitmap(byte[] img_byte){
+
+        Bitmap bmp = BitmapFactory.decodeByteArray(img_byte, 0, img_byte.length);
+        return bmp;
+    }
 
 }

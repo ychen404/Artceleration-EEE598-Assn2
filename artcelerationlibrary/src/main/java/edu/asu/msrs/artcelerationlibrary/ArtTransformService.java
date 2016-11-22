@@ -57,31 +57,44 @@ public class ArtTransformService extends Service {
             switch (msg.what) {
                 case MSG_HELLO:
                     Log.d(TAG, "HELLO");
-                    messenger_2 = msg.replyTo;
-                    try{
-                        messenger_2.send(Message.obtain(null,10,0,0));
-                    }catch (RemoteException e){
-                        e.printStackTrace();
-                    }
+
                     break;
                 case MSG_MULT:
                     Bundle dataBundle = msg.getData();
                     ParcelFileDescriptor pfd = (ParcelFileDescriptor) dataBundle.get("pfd");
                     FileInputStream fios = new FileInputStream(pfd.getFileDescriptor());
-                    //String testPfd = null;
-                    //Log.d(TAG, "test"+"abc");
-                    // StringBuffer fileContent = new StringBuffer("");
-                    //  byte[] buffer_fromService = new byte[1024];
-
-                   // compare(readFully(fios));
-
+          //          toBitmap(readFully(fios));
                     messenger_2 = msg.replyTo;
 
                     try {
-                        messenger_2.send(Message.obtain(null,10,0,0));
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    }
+                        byte[] bytes = readFully(fios);
+                        Log.d(TAG,"The byte array is " + String.valueOf(bytes));
+                        MemoryFile memFile_ret = null;
+                        memFile_ret = new MemoryFile("processed", bytes.length);
+                        memFile_ret.allowPurging(true); //
+                        memFile_ret.writeBytes(bytes, 0, 0, bytes.length);
+
+                        ParcelFileDescriptor pfd_ret = MemoryFileUtil.getParcelFileDescriptor(memFile_ret);
+                        Bundle processedBundle = new Bundle();
+                        processedBundle.putParcelable("pfd_ret", pfd_ret);
+
+                        try {
+
+                            msg.setData(processedBundle);
+                            msg.what = 10;
+                            messenger_2.send(msg);
+                            if(msg == null)
+                                Log.d("msg is null", "null");
+
+
+
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                    } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
                     break;
                 case transform:
                 default:
@@ -92,15 +105,16 @@ public class ArtTransformService extends Service {
 
     }
 
-    private void compare(byte[] in){
-        BitmapFactory.Options opts = new BitmapFactory.Options();
-        opts.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        Bitmap src_img = BitmapFactory.decodeResource(getResources(), R.drawable.asuhayden, opts);
-        ByteBuffer buff = ByteBuffer.allocate(src_img.getByteCount());
-        src_img.copyPixelsToBuffer(buff);
-        boolean same = Arrays.equals(buff.array(), in);
-        Log.d(TAG, "Same: " + same);
-    }
+//    private void compare(byte[] in){
+//        BitmapFactory.Options opts = new BitmapFactory.Options();
+//        opts.inPreferredConfig = Bitmap.Config.ARGB_8888;
+//        Bitmap src_img = BitmapFactory.decodeResource(getResources(), R.drawable.asuhayden, opts);
+//        ByteBuffer buff = ByteBuffer.allocate(src_img.getByteCount());
+//        src_img.copyPixelsToBuffer(buff);
+//        boolean same = Arrays.equals(buff.array(), in);
+//        Log.d(TAG, "Same: " + same);
+//    }
+
 
 
     public static byte[] readFully(FileInputStream input)
@@ -108,7 +122,7 @@ public class ArtTransformService extends Service {
         byte[] byteArray = null;
         try
         {
-            //          InputStream inputStream = new FileInputStream(f);
+            //InputStream inputStream = new FileInputStream(f);
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             byte[] b = new byte[1024*8];
             int bytesRead =0;
@@ -126,6 +140,8 @@ public class ArtTransformService extends Service {
         }
         return byteArray;
     }
+
+
 
 
     final Messenger mMessenger = new Messenger(new ArtTransformHandler());
