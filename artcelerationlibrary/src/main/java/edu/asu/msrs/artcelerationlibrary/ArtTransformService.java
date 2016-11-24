@@ -105,17 +105,6 @@ public class ArtTransformService extends Service {
 
     }
 
-//    private void compare(byte[] in){
-//        BitmapFactory.Options opts = new BitmapFactory.Options();
-//        opts.inPreferredConfig = Bitmap.Config.ARGB_8888;
-//        Bitmap src_img = BitmapFactory.decodeResource(getResources(), R.drawable.asuhayden, opts);
-//        ByteBuffer buff = ByteBuffer.allocate(src_img.getByteCount());
-//        src_img.copyPixelsToBuffer(buff);
-//        boolean same = Arrays.equals(buff.array(), in);
-//        Log.d(TAG, "Same: " + same);
-//    }
-
-
 
     public static byte[] readFully(FileInputStream input)
     {

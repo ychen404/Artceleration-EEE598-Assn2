@@ -20,6 +20,9 @@ import android.util.Log;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.util.LinkedList;
 
 /**
  * Created by rlikamwa on 10/2/2016.
@@ -36,12 +39,20 @@ public class ArtLib {
     }
 
 
+    // Added a default constructor for the queue test, 11/22/2016
+    public ArtLib(){
 
-
+    }
 
     private Messenger mMessenger = null;
     private Messenger mService;
     private boolean mBound;
+    public Bitmap img_list;
+    public int index_list;
+    public int[] intArgs_list;
+    public float[] floatArgs_list;
+    LinkedList<ReqArgs> mList = new LinkedList<ReqArgs>();
+
     ServiceConnection mServiceConnection = new ServiceConnection(){
 
         @Override
@@ -63,6 +74,7 @@ public class ArtLib {
             mBound = false;
         }
     };
+
     public void init(){
         mActivity.bindService (new Intent(mActivity, ArtTransformService.class),mServiceConnection, Context.BIND_AUTO_CREATE);
     }
@@ -128,10 +140,29 @@ public class ArtLib {
     //  Output: Boolean result
     public boolean requestTransform(Bitmap img, int index, int[] intArgs, float[] floatArgs){
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        img.compress(Bitmap.CompressFormat.PNG, 100, out);
-        byte[] bytes = out.toByteArray();
-//        byte[] bytes = "testString".getBytes();
+        ReqArgs reqArgs = new ReqArgs();
+        reqArgs.index_list = index;
+        reqArgs.intArgs_list = intArgs;
+        reqArgs.floatArgs_list = floatArgs;
+        reqArgs.img_list = img;
+        mList.add(reqArgs);
+
+
+//        ByteArrayOutputStream out = new ByteArrayOutputStream();
+//        img.compress(Bitmap.CompressFormat.PNG, 100, out);
+//        byte[] bytes = out.toByteArray();
+
+   //     mList.getLast().img_list.compress(Bitmap.CompressFormat.PNG, 100, out);
+
+
+        ByteBuffer buffer = ByteBuffer.allocateDirect(img.getByteCount());
+        img.copyPixelsToBuffer(buffer);
+
+//        ByteBuffer buffer = ByteBuffer.allocateDirect(mList.getLast().img_list.getByteCount());
+//        mList.getLast().img_list.copyPixelsFromBuffer(buffer);
+
+        byte[] bytes = buffer.array();
+
         try {
             MemoryFile memFile = new MemoryFile("somename", bytes.length);
             memFile.allowPurging(true); //
@@ -189,8 +220,17 @@ public class ArtLib {
 
     public Bitmap toBitmap(byte[] img_byte){
 
-        Bitmap bmp = BitmapFactory.decodeByteArray(img_byte, 0, img_byte.length);
+
+
+   //     Bitmap bmp = BitmapFactory.decodeByteArray(img_byte, 0, img_byte.length);
+        Buffer buf = ByteBuffer.wrap(img_byte);
+        Bitmap bmp = null; ;
+        bmp.copyPixelsFromBuffer(buf);
         return bmp;
     }
 
+
+
 }
+
+
