@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -24,13 +25,11 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 
-/**
- * Created by rlikamwa on 10/2/2016.
- */
 
 public class ArtLib {
     private TransformHandler artlistener;
     private Activity mActivity;
+    String TAG = "ArtLib";
 
 
     public ArtLib(Activity activity) {
@@ -39,18 +38,10 @@ public class ArtLib {
     }
 
 
-    // Added a default constructor for the queue test, 11/22/2016
-    public ArtLib(){
-
-    }
-
     private Messenger mMessenger = null;
     private Messenger mService;
     private boolean mBound;
-    public Bitmap img_list;
-    public int index_list;
-    public int[] intArgs_list;
-    public float[] floatArgs_list;
+
     LinkedList<ReqArgs> mList = new LinkedList<ReqArgs>();
 
     ServiceConnection mServiceConnection = new ServiceConnection(){
@@ -80,15 +71,17 @@ public class ArtLib {
     }
 
     public String[] getTransformsArray(){
-        String[] transforms = {"Gaussian Blur", "Neon edges", "Color Filter"};
+        String[] transforms = {"Color Filter", "Motion Blur", "ASCII Art", "ab", "cd"};
         return transforms;
     }
 
     public TransformTest[] getTestsArray(){
-        TransformTest[] transforms = new TransformTest[3];
+        TransformTest[] transforms = new TransformTest[5];
         transforms[0]=new TransformTest(0, new int[]{1,2,3}, new float[]{0.1f, 0.2f, 0.3f});
         transforms[1]=new TransformTest(1, new int[]{11,22,33}, new float[]{0.3f, 0.2f, 0.3f});
         transforms[2]=new TransformTest(2, new int[]{51,42,33}, new float[]{0.5f, 0.6f, 0.3f});
+        transforms[3]=new TransformTest(3, new int[]{51,42,33}, new float[]{0.5f, 0.6f, 0.3f});
+        transforms[4]=new TransformTest(4, new int[]{51,42,33}, new float[]{0.5f, 0.6f, 0.3f});
 
         return transforms;
     }
@@ -141,25 +134,28 @@ public class ArtLib {
     public boolean requestTransform(Bitmap img, int index, int[] intArgs, float[] floatArgs){
 
         ReqArgs reqArgs = new ReqArgs();
-        reqArgs.index_list = index;
-        reqArgs.intArgs_list = intArgs;
-        reqArgs.floatArgs_list = floatArgs;
-        reqArgs.img_list = img;
+        reqArgs.index = index;
+        reqArgs.intArgs = intArgs;
+        reqArgs.floatArgs = floatArgs;
+        reqArgs.img = img;
+        reqArgs.img_height = img.getHeight();
+        reqArgs.img_width = img.getWidth();
         mList.add(reqArgs);
+
+        Log.d(TAG, "The size is + " + String.valueOf(mList.size()));
 
 
 //        ByteArrayOutputStream out = new ByteArrayOutputStream();
 //        img.compress(Bitmap.CompressFormat.PNG, 100, out);
 //        byte[] bytes = out.toByteArray();
 
-   //     mList.getLast().img_list.compress(Bitmap.CompressFormat.PNG, 100, out);
+
+//        ByteBuffer buffer = ByteBuffer.allocateDirect(img.getByteCount());
+//        img.copyPixelsToBuffer(buffer);
 
 
-        ByteBuffer buffer = ByteBuffer.allocateDirect(img.getByteCount());
-        img.copyPixelsToBuffer(buffer);
-
-//        ByteBuffer buffer = ByteBuffer.allocateDirect(mList.getLast().img_list.getByteCount());
-//        mList.getLast().img_list.copyPixelsFromBuffer(buffer);
+        ByteBuffer buffer = ByteBuffer.allocateDirect(mList.getFirst().img.getByteCount());
+        mList.getFirst().img.copyPixelsFromBuffer(buffer);
 
         byte[] bytes = buffer.array();
 
@@ -173,6 +169,7 @@ public class ArtLib {
             int what = ArtTransformService.MSG_MULT;
             Bundle dataBundle = new Bundle();
             dataBundle.putParcelable("pfd", pfd);
+            dataBundle.putInt("index",mList.getFirst().index);
 
             Message msg = Message.obtain(null,what,2,3);
             msg.replyTo = mReceive;
@@ -193,10 +190,14 @@ public class ArtLib {
         return true;
     }
 
+    //Function: Convert input file stream from the service to buffer
+    //Input: FileInputStream
+    //Output: Buffer
 
-    public static byte[] readProcessed(FileInputStream input)
+    public static Buffer readProcessed(FileInputStream input)
     {
         byte[] byteArray = null;
+        Buffer buf = null;
         try
         {
             //InputStream inputStream = new FileInputStream(f);
@@ -210,27 +211,28 @@ public class ArtLib {
             }
 
             byteArray = bos.toByteArray();
+            buf = ByteBuffer.wrap(byteArray);
         }
         catch (IOException e)
         {
             e.printStackTrace();
         }
-        return byteArray;
+       // return byteArray;
+        return buf;
     }
 
-    public Bitmap toBitmap(byte[] img_byte){
+    //Function: Convert buffer into bitmap
+    //Input: Buffer
+    //Output: Bitmap object
 
+    public Bitmap toBitmap(Buffer buf){
 
+        Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
+        Bitmap bmp = Bitmap.createBitmap(mList.getFirst().img_width, mList.getFirst().img_height, conf);
 
-   //     Bitmap bmp = BitmapFactory.decodeByteArray(img_byte, 0, img_byte.length);
-        Buffer buf = ByteBuffer.wrap(img_byte);
-        Bitmap bmp = null; ;
         bmp.copyPixelsFromBuffer(buf);
         return bmp;
     }
 
-
-
 }
-
 

@@ -9,10 +9,12 @@ import android.graphics.Bitmap;
 public class ReqArgs {
 
 
-    public Bitmap img_list;
-    public int index_list;
-    public int[] intArgs_list;
-    public float[] floatArgs_list;
+    public Bitmap img;
+    public int index;
+    public int[] intArgs;
+    public float[] floatArgs;
+    public int img_height;
+    public int img_width;
 
 
 

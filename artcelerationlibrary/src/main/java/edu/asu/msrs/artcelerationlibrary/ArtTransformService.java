@@ -63,6 +63,8 @@ public class ArtTransformService extends Service {
                     Bundle dataBundle = msg.getData();
                     ParcelFileDescriptor pfd = (ParcelFileDescriptor) dataBundle.get("pfd");
                     FileInputStream fios = new FileInputStream(pfd.getFileDescriptor());
+                    int ind = dataBundle.getInt("Index");
+                    Log.d(TAG, "The index is + " + String.valueOf(ind));
           //          toBitmap(readFully(fios));
                     messenger_2 = msg.replyTo;
 
