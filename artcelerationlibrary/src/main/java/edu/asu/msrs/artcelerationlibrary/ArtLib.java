@@ -43,6 +43,7 @@ public class ArtLib {
     private boolean mBound;
 
     LinkedList<ReqArgs> mList = new LinkedList<ReqArgs>();
+    ReqArgs reqContainer = new ReqArgs();
 
     ServiceConnection mServiceConnection = new ServiceConnection(){
 
@@ -98,16 +99,16 @@ public class ArtLib {
     class ProcessedImgHandler extends Handler{
         @Override
         public void handleMessage(Message msg) {
-            Log.d("ArtLib","MULT: "+ msg.what);
+            Log.d(TAG,"Processed img received: "+ msg.what);
 
             switch (msg.what){
                 case ArtTransformService.MSG_MULT:
                     int result = msg.what;
-                    Log.d("ArtLib","MULT: "+ result);
+                    Log.d(TAG,"MULT: "+ result);
                 case 10:
                     Bundle retBundle = msg.getData();
                     if (msg.getData() == null){
-                        Log.d("getData","null");
+                        Log.d(TAG,"No data bundle");
                         return;
                     }
                     else {
@@ -131,7 +132,7 @@ public class ArtLib {
     // Function: requestTransform to the activity
     // Input: Bitmap image
     //  Output: Boolean result
-    public boolean requestTransform(Bitmap img, int index, int[] intArgs, float[] floatArgs){
+    public boolean requestTransform(Bitmap img, int index, int[] intArgs, float[] floatArgs) {
 
         ReqArgs reqArgs = new ReqArgs();
         reqArgs.index = index;
@@ -144,57 +145,67 @@ public class ArtLib {
 
         Log.d(TAG, "The size is + " + String.valueOf(mList.size()));
 
+        while (mList.size() != 0) {
 
-//        ByteArrayOutputStream out = new ByteArrayOutputStream();
-//        img.compress(Bitmap.CompressFormat.PNG, 100, out);
-//        byte[] bytes = out.toByteArray();
+            reqContainer = mList.pollFirst();
+            ByteBuffer buffer = ByteBuffer.allocateDirect(reqContainer.img.getByteCount());
+            reqContainer.img.copyPixelsFromBuffer(buffer);
 
+            byte[] bytes = buffer.array();
 
-//        ByteBuffer buffer = ByteBuffer.allocateDirect(img.getByteCount());
-//        img.copyPixelsToBuffer(buffer);
+            try {
+                MemoryFile memFile = new MemoryFile("somename", bytes.length);
+                memFile.allowPurging(true); //
+                memFile.writeBytes(bytes, 0, 0, bytes.length);
 
+                ParcelFileDescriptor pfd = MemoryFileUtil.getParcelFileDescriptor(memFile);
 
-        ByteBuffer buffer = ByteBuffer.allocateDirect(mList.getFirst().img.getByteCount());
-        mList.getFirst().img.copyPixelsFromBuffer(buffer);
+                int what = ArtTransformService.MSG_MULT;
+                Bundle dataBundle = new Bundle();
+                dataBundle.putParcelable("pfd", pfd);
+                dataBundle.putInt("index", reqContainer.index);
+               // dataBundle.putInt("index", 88);
 
-        byte[] bytes = buffer.array();
-
-        try {
-            MemoryFile memFile = new MemoryFile("somename", bytes.length);
-            memFile.allowPurging(true); //
-            memFile.writeBytes(bytes, 0, 0, bytes.length);
-
-            ParcelFileDescriptor pfd = MemoryFileUtil.getParcelFileDescriptor(memFile);
-
-            int what = ArtTransformService.MSG_MULT;
-            Bundle dataBundle = new Bundle();
-            dataBundle.putParcelable("pfd", pfd);
-            dataBundle.putInt("index",mList.getFirst().index);
-
-            Message msg = Message.obtain(null,what,2,3);
-            msg.replyTo = mReceive;
-            msg.setData(dataBundle);
-            memFile.close();
+                Log.d(TAG, "The index is + " + String.valueOf(reqContainer.index));
 
 
-        try {
-            if(mMessenger == null)
-                Log.v("test","null");
-            mMessenger.send(msg);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-        } catch (IOException e) {
-            e.printStackTrace();
+                Message msg = Message.obtain(null, what, 2, 3);
+                msg.replyTo = mReceive;
+                msg.setData(dataBundle);
+                memFile.close();
+
+
+                try {
+                    if (mMessenger == null)
+                        Log.v("test", "null");
+                    mMessenger.send(msg);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+           // return true;
         }
         return true;
+
+    }
+
+    public void queueMonitor(){
+
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        };
     }
 
     //Function: Convert input file stream from the service to buffer
     //Input: FileInputStream
     //Output: Buffer
 
-    public static Buffer readProcessed(FileInputStream input)
+    public Buffer readProcessed(FileInputStream input)
     {
         byte[] byteArray = null;
         Buffer buf = null;
@@ -212,6 +223,9 @@ public class ArtLib {
 
             byteArray = bos.toByteArray();
             buf = ByteBuffer.wrap(byteArray);
+
+
+
         }
         catch (IOException e)
         {
@@ -228,7 +242,7 @@ public class ArtLib {
     public Bitmap toBitmap(Buffer buf){
 
         Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
-        Bitmap bmp = Bitmap.createBitmap(mList.getFirst().img_width, mList.getFirst().img_height, conf);
+        Bitmap bmp = Bitmap.createBitmap(reqContainer.img_width, reqContainer.img_height, conf);
 
         bmp.copyPixelsFromBuffer(buf);
         return bmp;

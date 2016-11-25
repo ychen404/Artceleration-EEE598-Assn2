@@ -63,8 +63,8 @@ public class ArtTransformService extends Service {
                     Bundle dataBundle = msg.getData();
                     ParcelFileDescriptor pfd = (ParcelFileDescriptor) dataBundle.get("pfd");
                     FileInputStream fios = new FileInputStream(pfd.getFileDescriptor());
-                    int ind = dataBundle.getInt("Index");
-                    Log.d(TAG, "The index is + " + String.valueOf(ind));
+                    int ind = dataBundle.getInt("index");
+                    Log.d(TAG, "The index is " + String.valueOf(ind));
           //          toBitmap(readFully(fios));
                     messenger_2 = msg.replyTo;
 
@@ -108,7 +108,7 @@ public class ArtTransformService extends Service {
     }
 
 
-    public static byte[] readFully(FileInputStream input)
+    public byte[] readFully(FileInputStream input)
     {
         byte[] byteArray = null;
         try
@@ -129,6 +129,19 @@ public class ArtTransformService extends Service {
         {
             e.printStackTrace();
         }
+
+
+        long futureTime = System.currentTimeMillis()+10000;
+        while (System.currentTimeMillis() < futureTime){
+            synchronized (this){
+                try{
+                    wait(futureTime-System.currentTimeMillis());
+                } catch (Exception e){
+
+                }
+            }
+        }
+
         return byteArray;
     }
 
