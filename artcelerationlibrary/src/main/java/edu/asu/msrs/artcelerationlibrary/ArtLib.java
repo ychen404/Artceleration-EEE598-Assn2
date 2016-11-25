@@ -54,7 +54,7 @@ public class ArtLib {
             Log.v("test","Connected");
 
 
-            Message msg  = Message.obtain(null, ArtTransformService.MSG_MULT);
+            Message msg  = Message.obtain(null, ArtTransformService.COLOR_FILTER);
             msg.replyTo = mReceive;
 
 
@@ -72,7 +72,7 @@ public class ArtLib {
     }
 
     public String[] getTransformsArray(){
-        String[] transforms = {"Color Filter", "Motion Blur", "ASCII Art", "ab", "cd"};
+        String[] transforms = {"Color Filter", "Motion Blur", "ASCII Art", "Gaussian Blur", "Tilt Shift"};
         return transforms;
     }
 
@@ -102,9 +102,9 @@ public class ArtLib {
             Log.d(TAG,"Processed img received: "+ msg.what);
 
             switch (msg.what){
-                case ArtTransformService.MSG_MULT:
-                    int result = msg.what;
-                    Log.d(TAG,"MULT: "+ result);
+//                case ArtTransformService.MSG_MULT:
+//                    int result = msg.what;
+//                    Log.d(TAG,"MULT: "+ result);
                 case 10:
                     Bundle retBundle = msg.getData();
                     if (msg.getData() == null){
@@ -143,9 +143,9 @@ public class ArtLib {
         reqArgs.img_width = img.getWidth();
         mList.add(reqArgs);
 
-        Log.d(TAG, "The size is + " + String.valueOf(mList.size()));
+    //    Log.d(TAG, "The size is + " + String.valueOf(mList.size()));
 
-        while (mList.size() != 0) {
+
 
             reqContainer = mList.pollFirst();
             ByteBuffer buffer = ByteBuffer.allocateDirect(reqContainer.img.getByteCount());
@@ -160,16 +160,17 @@ public class ArtLib {
 
                 ParcelFileDescriptor pfd = MemoryFileUtil.getParcelFileDescriptor(memFile);
 
-                int what = ArtTransformService.MSG_MULT;
+               // int what = ArtTransformService.MSG_MULT;
+
                 Bundle dataBundle = new Bundle();
                 dataBundle.putParcelable("pfd", pfd);
                 dataBundle.putInt("index", reqContainer.index);
                // dataBundle.putInt("index", 88);
 
                 Log.d(TAG, "The index is + " + String.valueOf(reqContainer.index));
+                int what = reqContainer.index;
 
-
-                Message msg = Message.obtain(null, what, 2, 3);
+                Message msg = Message.obtain(null, what);
                 msg.replyTo = mReceive;
                 msg.setData(dataBundle);
                 memFile.close();
@@ -185,21 +186,9 @@ public class ArtLib {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-           // return true;
+            return true;
         }
-        return true;
 
-    }
-
-    public void queueMonitor(){
-
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        };
-    }
 
     //Function: Convert input file stream from the service to buffer
     //Input: FileInputStream

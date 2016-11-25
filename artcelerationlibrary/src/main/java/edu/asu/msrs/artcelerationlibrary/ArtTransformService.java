@@ -39,9 +39,15 @@ public class ArtTransformService extends Service {
     public ArtTransformService() {
     }
     String TAG = "ArtTransformService";
-    static final int MSG_HELLO = 1;
-    static final int MSG_MULT = 2;
-    static final int transform =3;
+  //  static final int MSG_HELLO = 1;
+  //  static final int MSG_MULT = 2;
+    static final int COLOR_FILTER   = 0;
+    static final int MOTION_BLUR    = 1;
+    static final int ASCII_ART      = 2;
+    static final int GAUSSIAN_BLUR  = 3;
+    static final int TILT_SHIFT     = 4;
+
+
     private Messenger messenger_2;
 
 
@@ -53,57 +59,71 @@ public class ArtTransformService extends Service {
         // Input: Message.
         //  Output: receive data from library
         public void handleMessage(Message msg){
+
             Log.d(TAG, "handleMessage(msg)"+ msg.what);
+            Bundle dataBundle = msg.getData();
+            ParcelFileDescriptor pfd = (ParcelFileDescriptor) dataBundle.get("pfd");
+            FileInputStream fios = new FileInputStream(pfd.getFileDescriptor());
+            int ind = dataBundle.getInt("index");
+            Log.d(TAG, "The index is " + String.valueOf(ind));
+            byte[] bytes = readFully(fios);
+            byte[] processed_bytes = null;
+
+            messenger_2 = msg.replyTo;
             switch (msg.what) {
-                case MSG_HELLO:
-                    Log.d(TAG, "HELLO");
 
+                case COLOR_FILTER:
+                    processed_bytes = colorFilter(bytes);
                     break;
-                case MSG_MULT:
-                    Bundle dataBundle = msg.getData();
-                    ParcelFileDescriptor pfd = (ParcelFileDescriptor) dataBundle.get("pfd");
-                    FileInputStream fios = new FileInputStream(pfd.getFileDescriptor());
-                    int ind = dataBundle.getInt("index");
-                    Log.d(TAG, "The index is " + String.valueOf(ind));
-          //          toBitmap(readFully(fios));
-                    messenger_2 = msg.replyTo;
-
-                    try {
-                        byte[] bytes = readFully(fios);
-                        Log.d(TAG,"The byte array is " + String.valueOf(bytes));
-                        MemoryFile memFile_ret = null;
-                        memFile_ret = new MemoryFile("processed", bytes.length);
-                        memFile_ret.allowPurging(true); //
-                        memFile_ret.writeBytes(bytes, 0, 0, bytes.length);
-
-                        ParcelFileDescriptor pfd_ret = MemoryFileUtil.getParcelFileDescriptor(memFile_ret);
-                        Bundle processedBundle = new Bundle();
-                        processedBundle.putParcelable("pfd_ret", pfd_ret);
-
-                        try {
-
-                            msg.setData(processedBundle);
-                            msg.what = 10;
-                            messenger_2.send(msg);
-                            if(msg == null)
-                                Log.d("msg is null", "null");
-
-
-
-                        } catch (RemoteException e) {
-                            e.printStackTrace();
-                        }
-                    } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
+                case MOTION_BLUR:
+                    motionBlur(bytes);
                     break;
-                case transform:
+                case ASCII_ART:
+                    asciiArt(bytes);
+                    break;
+                case GAUSSIAN_BLUR:
+                    gaussianBlur(bytes);
+                    break;
+                case TILT_SHIFT:
+                    tiltShift(bytes);
+                    break;
+
                 default:
                     break;
             }
 
+            try {
+
+                Log.d(TAG,"The byte array is " + String.valueOf(bytes));
+                MemoryFile memFile_ret = null;
+                memFile_ret = new MemoryFile("processed", bytes.length);
+                memFile_ret.allowPurging(true); //
+                memFile_ret.writeBytes(bytes, 0, 0, bytes.length);
+
+                ParcelFileDescriptor pfd_ret = MemoryFileUtil.getParcelFileDescriptor(memFile_ret);
+                Bundle processedBundle = new Bundle();
+                processedBundle.putParcelable("pfd_ret", pfd_ret);
+
+                try {
+
+                    msg.setData(processedBundle);
+                    msg.what = 10;
+                    messenger_2.send(msg);
+                    if(msg == null)
+                        Log.d("msg is null", "null");
+
+
+
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
+
+
 
     }
 
@@ -144,6 +164,41 @@ public class ArtTransformService extends Service {
 
         return byteArray;
     }
+
+
+
+    public byte[] colorFilter(byte[] b){
+
+        for(int i = 0;i<(b.length-3)/4;i++){
+            b[4*i+1] = 0;
+            b[4*i+2] = 0;
+        }
+
+        return b;
+
+    }
+
+    public byte[] motionBlur(byte[] b){
+
+        return b;
+
+    }
+    public byte[] asciiArt(byte[] b){
+
+        return b;
+
+    }
+    public byte[] gaussianBlur(byte[] b){
+
+        return b;
+
+    }
+    public byte[] tiltShift(byte[] b){
+
+        return b;
+
+    }
+
 
 
 
