@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -23,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,8 +41,7 @@ public class ArtTransformService extends Service {
     public ArtTransformService() {
     }
     String TAG = "ArtTransformService";
-  //  static final int MSG_HELLO = 1;
-  //  static final int MSG_MULT = 2;
+
     static final int COLOR_FILTER   = 0;
     static final int MOTION_BLUR    = 1;
     static final int ASCII_ART      = 2;
@@ -49,6 +50,8 @@ public class ArtTransformService extends Service {
 
 
     private Messenger messenger_2;
+    public int img_width;
+    public int img_height;
 
 
 
@@ -65,8 +68,14 @@ public class ArtTransformService extends Service {
             ParcelFileDescriptor pfd = (ParcelFileDescriptor) dataBundle.get("pfd");
             FileInputStream fios = new FileInputStream(pfd.getFileDescriptor());
             int ind = dataBundle.getInt("index");
+            img_width = dataBundle.getInt("width");
+            img_height = dataBundle.getInt("height");
             Log.d(TAG, "The index is " + String.valueOf(ind));
+            Log.d(TAG, "The width is " + String.valueOf(img_width));
+            Log.d(TAG, "The height is " + String.valueOf(img_height));
+
             byte[] bytes = readFully(fios);
+            Log.d(TAG,"colorfilter");
             byte[] processed_bytes = null;
 
             messenger_2 = msg.replyTo;
@@ -76,7 +85,7 @@ public class ArtTransformService extends Service {
                     processed_bytes = colorFilter(bytes);
                     break;
                 case MOTION_BLUR:
-                    motionBlur(bytes);
+                    processed_bytes = motionBlur(bytes);
                     break;
                 case ASCII_ART:
                     asciiArt(bytes);
@@ -93,12 +102,13 @@ public class ArtTransformService extends Service {
             }
 
             try {
+                // Send back the processed byte array
 
-                Log.d(TAG,"The byte array is " + String.valueOf(bytes));
+                Log.d(TAG,"The byte array is " + String.valueOf(processed_bytes));
                 MemoryFile memFile_ret = null;
-                memFile_ret = new MemoryFile("processed", bytes.length);
+                memFile_ret = new MemoryFile("processed", processed_bytes.length);
                 memFile_ret.allowPurging(true); //
-                memFile_ret.writeBytes(bytes, 0, 0, bytes.length);
+                memFile_ret.writeBytes(processed_bytes, 0, 0, processed_bytes.length);
 
                 ParcelFileDescriptor pfd_ret = MemoryFileUtil.getParcelFileDescriptor(memFile_ret);
                 Bundle processedBundle = new Bundle();
@@ -135,7 +145,7 @@ public class ArtTransformService extends Service {
         {
             //InputStream inputStream = new FileInputStream(f);
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            byte[] b = new byte[1024*8];
+            byte[] b = new byte[1600*1066*4];
             int bytesRead =0;
 
             while ((bytesRead = input.read(b)) != -1)
@@ -144,6 +154,7 @@ public class ArtTransformService extends Service {
             }
 
             byteArray = bos.toByteArray();
+            Log.d(TAG,"The byte array is " + String.valueOf(byteArray[0]));
         }
         catch (IOException e)
         {
@@ -151,36 +162,88 @@ public class ArtTransformService extends Service {
         }
 
 
-        long futureTime = System.currentTimeMillis()+10000;
-        while (System.currentTimeMillis() < futureTime){
-            synchronized (this){
-                try{
-                    wait(futureTime-System.currentTimeMillis());
-                } catch (Exception e){
-
-                }
-            }
-        }
+//        long futureTime = System.currentTimeMillis()+10000;
+//        while (System.currentTimeMillis() < futureTime){
+//            synchronized (this){
+//                try{
+//                    wait(futureTime-System.currentTimeMillis());
+//                } catch (Exception e){
+//
+//                }
+//            }
+//        }
 
         return byteArray;
+    }
+
+    public Bitmap byteToBmp (byte[] b){
+
+        Buffer buf = null;
+        buf = ByteBuffer.wrap(b);
+        Bitmap.Config conf = Bitmap.Config.ARGB_8888;
+        Bitmap bmp = Bitmap.createBitmap(img_width, img_height, conf);
+
+        bmp.copyPixelsFromBuffer(buf);
+
+        return bmp;
+    }
+
+    public byte[] bmpToByte(Bitmap bitmap){
+
+        ByteBuffer buffer = ByteBuffer.allocateDirect(bitmap.getByteCount());
+        bitmap.copyPixelsToBuffer(buffer);
+
+        byte[] bytes = buffer.array();
+
+        return bytes;
     }
 
 
 
     public byte[] colorFilter(byte[] b){
 
-        for(int i = 0;i<(b.length-3)/4;i++){
-            b[4*i+1] = 0;
-            b[4*i+2] = 0;
+
+        Bitmap bmp = byteToBmp(b);
+
+        for(int x = 0; x<bmp.getWidth(); x++) {
+            for(int y = 0; y<bmp.getHeight(); y++){
+      //          bmp.setPixel(x, y, (int)(bmp.getPixel(x, y) *0.2));// & 0x66FF6600);
+                bmp.setPixel(x, y, (bmp.getPixel(x, y) & 0xFFFF0000));
+
+                //Log.d(TAG,"the color is"+String.valueOf(color));
+                //bmp.setPixel(x, y,  color);
+
+                // bmp.setPixel(x, y, Color.BLUE);
+
+            }
         }
 
-        return b;
+        return bmpToByte(bmp);
 
     }
 
-    public byte[] motionBlur(byte[] b){
+//    public byte[] motionBlur(byte[] b){
+//
+//
+//        return b;
+//
+//    }
 
-        return b;
+    public byte[] motionBlur(byte[] bytes){
+
+
+        Bitmap bmp = byteToBmp(bytes);
+
+        for(int x = 0; x<bmp.getWidth(); x++) {
+            for(int y = 0; y<bmp.getHeight(); y++){
+                bmp.setPixel(x, y, bmp.getPixel(x, y) & 0xFF00FF00);
+               // bmp.setPixel(x, y, Color.BLUE);
+
+            }
+        }
+
+
+        return bmpToByte(bmp);
 
     }
     public byte[] asciiArt(byte[] b){

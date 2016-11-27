@@ -149,7 +149,7 @@ public class ArtLib {
 
             reqContainer = mList.pollFirst();
             ByteBuffer buffer = ByteBuffer.allocateDirect(reqContainer.img.getByteCount());
-            reqContainer.img.copyPixelsFromBuffer(buffer);
+            reqContainer.img.copyPixelsToBuffer(buffer);
 
             byte[] bytes = buffer.array();
 
@@ -165,7 +165,8 @@ public class ArtLib {
                 Bundle dataBundle = new Bundle();
                 dataBundle.putParcelable("pfd", pfd);
                 dataBundle.putInt("index", reqContainer.index);
-               // dataBundle.putInt("index", 88);
+                dataBundle.putInt("width", reqContainer.img_width );
+                dataBundle.putInt("height", reqContainer.img_height );
 
                 Log.d(TAG, "The index is + " + String.valueOf(reqContainer.index));
                 int what = reqContainer.index;
@@ -230,7 +231,7 @@ public class ArtLib {
 
     public Bitmap toBitmap(Buffer buf){
 
-        Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
+        Bitmap.Config conf = Bitmap.Config.ARGB_8888;
         Bitmap bmp = Bitmap.createBitmap(reqContainer.img_width, reqContainer.img_height, conf);
 
         bmp.copyPixelsFromBuffer(buf);
