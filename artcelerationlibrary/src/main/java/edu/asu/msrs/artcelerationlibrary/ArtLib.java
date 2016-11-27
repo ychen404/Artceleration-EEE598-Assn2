@@ -37,6 +37,13 @@ public class ArtLib {
         init();
     }
 
+    static {
+        System.loadLibrary("my-native-lib");
+    }
+
+    public native String StringFromJNI();
+
+
 
     private Messenger mMessenger = null;
     private Messenger mService;
@@ -143,6 +150,8 @@ public class ArtLib {
         reqArgs.img_width = img.getWidth();
         mList.add(reqArgs);
 
+
+
     //    Log.d(TAG, "The size is + " + String.valueOf(mList.size()));
 
 
@@ -197,6 +206,8 @@ public class ArtLib {
 
     public Buffer readProcessed(FileInputStream input)
     {
+        Log.d(TAG,StringFromJNI());
+
         byte[] byteArray = null;
         Buffer buf = null;
         try

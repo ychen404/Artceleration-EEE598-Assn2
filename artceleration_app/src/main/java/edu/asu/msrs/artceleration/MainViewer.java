@@ -24,6 +24,7 @@ public class MainViewer extends AppCompatActivity {
     static {
         System.loadLibrary("native-lib");
     }
+    private native String stringFromJNI();
     private Spinner spinner;
     private TextView status1;
     private TextView status2;
