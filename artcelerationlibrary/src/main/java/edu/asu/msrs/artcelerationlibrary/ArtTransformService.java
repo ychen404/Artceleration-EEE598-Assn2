@@ -145,7 +145,8 @@ public class ArtTransformService extends Service {
         {
             //InputStream inputStream = new FileInputStream(f);
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            byte[] b = new byte[1600*1066*4];
+            //byte[] b = new byte[1600*1066*4];
+            byte[] b = new byte[1024*8];
             int bytesRead =0;
 
             while ((bytesRead = input.read(b)) != -1)
@@ -213,7 +214,7 @@ public class ArtTransformService extends Service {
                 //Log.d(TAG,"the color is"+String.valueOf(color));
                 //bmp.setPixel(x, y,  color);
 
-                // bmp.setPixel(x, y, Color.BLUE);
+               //  bmp.setPixel(x, y, Color.BLUE);
 
             }
         }
@@ -222,30 +223,107 @@ public class ArtTransformService extends Service {
 
     }
 
-//    public byte[] motionBlur(byte[] b){
+
+//    public byte[] motionBlur(byte[] bytes){
 //
 //
-//        return b;
+//        Log.d(TAG,"MotionBlur");
+//        int r = 10;
+//        int redValue;
+//        int blueValue;
+//        int greenValue;
+//        Bitmap bmp = byteToBmp(bytes);
+//
+//        //Log.d(TAG, "Red + blue + green" + String.valueOf(Color.red(bmp.getPixel(100,100)))+ String.valueOf(Color.blue(bmp.getPixel(0,0)) + String.valueOf(Color.green(bmp.getPixel(0,0)))));
+//
+//        for(int x = 0; x<bmp.getWidth(); x++) {
+//            for(int y = 0; y<bmp.getHeight(); y++){
+//                redValue = Color.red(bmp.getPixel(x,y));
+//                blueValue = Color.blue(bmp.getPixel(x,y));
+//                greenValue = Color.green(bmp.getPixel(x,y));
+//                for (int k = 1; k <= r; k++) {
+//
+//                   // Log.d(TAG, "Red + blue + green" + String.valueOf(Color.red(bmp.getPixel(0,0)))+ String.valueOf(Color.blue(bmp.getPixel(0,0)) + String.valueOf(Color.green(bmp.getPixel(0,0)))));
+//
+//                    if (x-k < 0 && x+k > bmp.getHeight()-1){
+//                        redValue += (redValue + 0 + 0); // case 1
+//                        blueValue += (blueValue + 0 + 0);
+//                        greenValue += (greenValue + 0 + 0);
+//
+//
+//                    }
+//                    else if(x-k < 0 && x+k <= bmp.getHeight()-1){
+//                        redValue += (redValue + Color.red(bmp.getPixel((x+k),y)));  // case 2
+//                        blueValue += (blueValue + Color.blue(bmp.getPixel((x+k),y)));
+//                        greenValue += (greenValue + Color.green(bmp.getPixel((x+k),y)));
+//
+//                    }
+//                    else if(x-k >=0 && x+k > bmp.getHeight()-1){
+//                        redValue += (redValue + Color.red(bmp.getPixel((x-k),y)));  // case 3
+//                        blueValue += (blueValue + Color.blue(bmp.getPixel((x-k),y)));
+//                        greenValue += (greenValue + Color.green(bmp.getPixel((x-k),y)));
+//
+//                    }
+//                    else{ //if (x-k >= 0 && x+k <= bmp.getHeight()-1)
+//                        redValue += (redValue + Color.red(bmp.getPixel((x-k),y)) + Color.red(bmp.getPixel((x+k),y))); // case 4
+//                        blueValue += (blueValue + Color.blue(bmp.getPixel((x-k),y)) + Color.blue(bmp.getPixel((x+k),y)));
+//                        greenValue += (greenValue + Color.green(bmp.getPixel((x-k),y)) + Color.green(bmp.getPixel((x+k),y)));
+//
+//
+//                    }
+//
+//
+//                    redValue = redValue/(2*r+1);
+//                    blueValue = blueValue/(2*r+1);
+//                    greenValue = greenValue/(2*r+1);
+//                    bmp.setPixel(x,y,Color.argb(255,redValue,greenValue,blueValue));
+//                }
+//            }
+//        }
+//
+//        Log.d(TAG,"END");
+//
+//        return bmpToByte(bmp);
 //
 //    }
 
     public byte[] motionBlur(byte[] bytes){
 
 
+        Log.d(TAG,"MotionBlur");
+        int r = 10;
+        int redValue;
+        int blueValue;
+        int greenValue;
         Bitmap bmp = byteToBmp(bytes);
 
-        for(int x = 0; x<bmp.getWidth(); x++) {
-            for(int y = 0; y<bmp.getHeight(); y++){
-                bmp.setPixel(x, y, bmp.getPixel(x, y) & 0xFF00FF00);
-               // bmp.setPixel(x, y, Color.BLUE);
+        //Log.d(TAG, "Red + blue + green" + String.valueOf(Color.red(bmp.getPixel(100,100)))+ String.valueOf(Color.blue(bmp.getPixel(0,0)) + String.valueOf(Color.green(bmp.getPixel(0,0)))));
+
+        for(int x = r; x<bmp.getWidth()-r; x++) {
+            for (int y = r; y < bmp.getHeight() - r; y++) {
+                redValue = Color.red(bmp.getPixel(x, y));
+                blueValue = Color.blue(bmp.getPixel(x, y));
+                greenValue = Color.green(bmp.getPixel(x, y));
+                for (int k = 1; k <= r; k++) {
+                    redValue += ( Color.red(bmp.getPixel((x - k), y)) + Color.red(bmp.getPixel((x + k), y)));
+                    blueValue += ( Color.blue(bmp.getPixel((x - k), y)) + Color.blue(bmp.getPixel((x + k), y)));
+                    greenValue += ( Color.green(bmp.getPixel((x - k), y)) + Color.green(bmp.getPixel((x + k), y)));
+
+
+                }
+                redValue = redValue / (2 * r + 1);
+                blueValue = blueValue / (2 * r + 1);
+                greenValue = greenValue / (2 * r + 1);
+                bmp.setPixel(x, y, Color.argb(255, redValue, greenValue, blueValue));
 
             }
         }
-
+        Log.d(TAG,"END");
 
         return bmpToByte(bmp);
 
     }
+
     public byte[] asciiArt(byte[] b){
 
         return b;

@@ -5,6 +5,6 @@ jstring
 Java_edu_asu_msrs_artcelerationlibrary_ArtLib_StringFromJNI(
         JNIEnv *env,
         jobject /* this */) {
-    std::string hello = "Hello";
+    std::string hello = "GoodHello";
     return env->NewStringUTF(hello.c_str());
 }
