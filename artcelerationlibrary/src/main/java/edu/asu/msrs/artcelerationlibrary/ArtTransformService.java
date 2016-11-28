@@ -52,7 +52,9 @@ public class ArtTransformService extends Service {
     private Messenger messenger_2;
     public int img_width;
     public int img_height;
-    //public ColorFilter piecewisefilter;
+
+    GaussianBlur gaussianBlur = new GaussianBlur();
+
 
     ColorFilter piecewisefilter = new ColorFilter() ;
    // public AsciiArt mAscii;
@@ -95,7 +97,7 @@ public class ArtTransformService extends Service {
                     processed_bytes = mAscii.ascii(bytes);
                     break;
                 case GAUSSIAN_BLUR:
-                    gaussianBlur(bytes);
+                  //  processed_bytes = gaussianBlur.gblur(bytes);
                     break;
                 case TILT_SHIFT:
                     tiltShift(bytes);
@@ -240,16 +242,15 @@ public class ArtTransformService extends Service {
 
     }
 
-//    public byte[] asciiArt(byte[] b){
+
+
+//    public byte[] gaussianBlur(byte[] b){
 //
 //        return b;
 //
 //    }
-    public byte[] gaussianBlur(byte[] b){
+//
 
-        return b;
-
-    }
     public byte[] tiltShift(byte[] b){
 
         return b;
