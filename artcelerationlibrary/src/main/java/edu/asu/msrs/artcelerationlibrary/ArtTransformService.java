@@ -55,6 +55,8 @@ public class ArtTransformService extends Service {
     //public ColorFilter piecewisefilter;
 
     ColorFilter piecewisefilter = new ColorFilter() ;
+   // public AsciiArt mAscii;
+    AsciiArt mAscii = new AsciiArt(this);
 
     class ArtTransformHandler extends Handler{
         @Override
@@ -90,7 +92,7 @@ public class ArtTransformService extends Service {
                     processed_bytes = motionBlur(bytes);
                     break;
                 case ASCII_ART:
-                    asciiArt(bytes);
+                    processed_bytes = mAscii.ascii(bytes);
                     break;
                 case GAUSSIAN_BLUR:
                     gaussianBlur(bytes);
@@ -135,8 +137,6 @@ public class ArtTransformService extends Service {
 
         }
 
-
-
     }
 
 
@@ -165,16 +165,6 @@ public class ArtTransformService extends Service {
         }
 
 
-//        long futureTime = System.currentTimeMillis()+10000;
-//        while (System.currentTimeMillis() < futureTime){
-//            synchronized (this){
-//                try{
-//                    wait(futureTime-System.currentTimeMillis());
-//                } catch (Exception e){
-//
-//                }
-//            }
-//        }
 
         return byteArray;
     }
@@ -213,70 +203,6 @@ public class ArtTransformService extends Service {
 
     }
 
-
-//    public byte[] motionBlur(byte[] bytes){
-//
-//
-//        Log.d(TAG,"MotionBlur");
-//        int r = 10;
-//        int redValue;
-//        int blueValue;
-//        int greenValue;
-//        Bitmap bmp = byteToBmp(bytes);
-//
-//        //Log.d(TAG, "Red + blue + green" + String.valueOf(Color.red(bmp.getPixel(100,100)))+ String.valueOf(Color.blue(bmp.getPixel(0,0)) + String.valueOf(Color.green(bmp.getPixel(0,0)))));
-//
-//        for(int x = 0; x<bmp.getWidth(); x++) {
-//            for(int y = 0; y<bmp.getHeight(); y++){
-//                redValue = Color.red(bmp.getPixel(x,y));
-//                blueValue = Color.blue(bmp.getPixel(x,y));
-//                greenValue = Color.green(bmp.getPixel(x,y));
-//                for (int k = 1; k <= r; k++) {
-//
-//                   // Log.d(TAG, "Red + blue + green" + String.valueOf(Color.red(bmp.getPixel(0,0)))+ String.valueOf(Color.blue(bmp.getPixel(0,0)) + String.valueOf(Color.green(bmp.getPixel(0,0)))));
-//
-//                    if (x-k < 0 && x+k > bmp.getHeight()-1){
-//                        redValue += (redValue + 0 + 0); // case 1
-//                        blueValue += (blueValue + 0 + 0);
-//                        greenValue += (greenValue + 0 + 0);
-//
-//
-//                    }
-//                    else if(x-k < 0 && x+k <= bmp.getHeight()-1){
-//                        redValue += (redValue + Color.red(bmp.getPixel((x+k),y)));  // case 2
-//                        blueValue += (blueValue + Color.blue(bmp.getPixel((x+k),y)));
-//                        greenValue += (greenValue + Color.green(bmp.getPixel((x+k),y)));
-//
-//                    }
-//                    else if(x-k >=0 && x+k > bmp.getHeight()-1){
-//                        redValue += (redValue + Color.red(bmp.getPixel((x-k),y)));  // case 3
-//                        blueValue += (blueValue + Color.blue(bmp.getPixel((x-k),y)));
-//                        greenValue += (greenValue + Color.green(bmp.getPixel((x-k),y)));
-//
-//                    }
-//                    else{ //if (x-k >= 0 && x+k <= bmp.getHeight()-1)
-//                        redValue += (redValue + Color.red(bmp.getPixel((x-k),y)) + Color.red(bmp.getPixel((x+k),y))); // case 4
-//                        blueValue += (blueValue + Color.blue(bmp.getPixel((x-k),y)) + Color.blue(bmp.getPixel((x+k),y)));
-//                        greenValue += (greenValue + Color.green(bmp.getPixel((x-k),y)) + Color.green(bmp.getPixel((x+k),y)));
-//
-//
-//                    }
-//
-//
-//                    redValue = redValue/(2*r+1);
-//                    blueValue = blueValue/(2*r+1);
-//                    greenValue = greenValue/(2*r+1);
-//                    bmp.setPixel(x,y,Color.argb(255,redValue,greenValue,blueValue));
-//                }
-//            }
-//        }
-//
-//        Log.d(TAG,"END");
-//
-//        return bmpToByte(bmp);
-//
-//    }
-
     public byte[] motionBlur(byte[] bytes){
 
 
@@ -314,11 +240,11 @@ public class ArtTransformService extends Service {
 
     }
 
-    public byte[] asciiArt(byte[] b){
-
-        return b;
-
-    }
+//    public byte[] asciiArt(byte[] b){
+//
+//        return b;
+//
+//    }
     public byte[] gaussianBlur(byte[] b){
 
         return b;

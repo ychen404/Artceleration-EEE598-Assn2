@@ -10,15 +10,6 @@ public class ColorFilter {
         String TAG = "ColorFilter";
         Log.d(TAG,"Start");
 
-//        byte[] pixels;
-        //final int width = hugeImage.getWidth();
-        //final int height = hugeImage.getHeight();
-
-        //for (int i = 0; i < pixels.length; i++) {
-        //System.out.print(pixels[i] + " ");
-        //}
-        //System.out.print(height + " ");
-        //System.out.print(width);
         int [] piecewiseArray = new int[]{1, 2, 100, 155, 200, 210, 255, 255,
                 1, 5, 101, 130, 201, 240, 254, 254,
                 2, 2, 102, 102, 202, 202, 253, 253};
