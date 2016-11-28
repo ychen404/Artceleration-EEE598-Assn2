@@ -52,8 +52,9 @@ public class ArtTransformService extends Service {
     private Messenger messenger_2;
     public int img_width;
     public int img_height;
+    //public ColorFilter piecewisefilter;
 
-
+    ColorFilter piecewisefilter = new ColorFilter() ;
 
     class ArtTransformHandler extends Handler{
         @Override
@@ -83,6 +84,7 @@ public class ArtTransformService extends Service {
 
                 case COLOR_FILTER:
                     processed_bytes = colorFilter(bytes);
+
                     break;
                 case MOTION_BLUR:
                     processed_bytes = motionBlur(bytes);
@@ -202,24 +204,12 @@ public class ArtTransformService extends Service {
 
 
     public byte[] colorFilter(byte[] b){
+        Log.d(TAG, "Start color filter");
 
 
-        Bitmap bmp = byteToBmp(b);
+      //  return b;
+        return piecewisefilter.piecewiseprocess(b);
 
-        for(int x = 0; x<bmp.getWidth(); x++) {
-            for(int y = 0; y<bmp.getHeight(); y++){
-      //          bmp.setPixel(x, y, (int)(bmp.getPixel(x, y) *0.2));// & 0x66FF6600);
-                bmp.setPixel(x, y, (bmp.getPixel(x, y) & 0xFFFF0000));
-
-                //Log.d(TAG,"the color is"+String.valueOf(color));
-                //bmp.setPixel(x, y,  color);
-
-               //  bmp.setPixel(x, y, Color.BLUE);
-
-            }
-        }
-
-        return bmpToByte(bmp);
 
     }
 

@@ -45,9 +45,8 @@ public class ArtLib {
 //        System.loadLibrary("hello-neon");
 //    }
     // To test NEON
-    public native String StringFromJNI();
-
-    public native String stringFromJNI();
+    //public native String StringFromJNI();
+    //public native String stringFromJNI();
 
 
     private Messenger mMessenger = null;
@@ -211,9 +210,9 @@ public class ArtLib {
 
     public Buffer readProcessed(FileInputStream input)
     {
-          Log.d(TAG,StringFromJNI()); // Test cpp
+        //  Log.d(TAG,StringFromJNI()); // Test cpp
 
-          Log.d(TAG,stringFromJNI()); // Test neon
+          //Log.d(TAG,stringFromJNI()); // Test neon
 
         byte[] byteArray = null;
         Buffer buf = null;
