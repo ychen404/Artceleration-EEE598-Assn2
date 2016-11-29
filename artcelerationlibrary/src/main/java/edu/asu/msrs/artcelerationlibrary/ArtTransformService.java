@@ -97,7 +97,8 @@ public class ArtTransformService extends Service {
                     processed_bytes = mAscii.ascii(bytes);
                     break;
                 case GAUSSIAN_BLUR:
-                  //  processed_bytes = gaussianBlur.gblur(bytes);
+
+                    processed_bytes = bmpToByte(gaussianBlur.gblur(byteToBmp(bytes),5,1f));
                     break;
                 case TILT_SHIFT:
                     tiltShift(bytes);
@@ -213,7 +214,9 @@ public class ArtTransformService extends Service {
         int redValue;
         int blueValue;
         int greenValue;
+        Log.d(TAG,"Timer starts");
         Bitmap bmp = byteToBmp(bytes);
+        Log.d(TAG,"Timer ends");
 
         //Log.d(TAG, "Red + blue + green" + String.valueOf(Color.red(bmp.getPixel(100,100)))+ String.valueOf(Color.blue(bmp.getPixel(0,0)) + String.valueOf(Color.green(bmp.getPixel(0,0)))));
 
@@ -226,8 +229,6 @@ public class ArtTransformService extends Service {
                     redValue += ( Color.red(bmp.getPixel((x - k), y)) + Color.red(bmp.getPixel((x + k), y)));
                     blueValue += ( Color.blue(bmp.getPixel((x - k), y)) + Color.blue(bmp.getPixel((x + k), y)));
                     greenValue += ( Color.green(bmp.getPixel((x - k), y)) + Color.green(bmp.getPixel((x + k), y)));
-
-
                 }
                 redValue = redValue / (2 * r + 1);
                 blueValue = blueValue / (2 * r + 1);
@@ -256,8 +257,6 @@ public class ArtTransformService extends Service {
         return b;
 
     }
-
-
 
 
 

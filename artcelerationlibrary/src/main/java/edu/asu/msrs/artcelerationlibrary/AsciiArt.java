@@ -13,6 +13,8 @@ import java.nio.ByteBuffer;
  */
 public class AsciiArt{
 
+    String TAG ="Ascii";
+
 
 
     public byte[] bmpToByte(Bitmap bitmap){
@@ -41,20 +43,31 @@ public class AsciiArt{
         ReqArgs mReq = new ReqArgs();
         int pixelswidth = 1600;
         Log.d("AsciiArt","the width obtained"+ String.valueOf(pixelswidth));
-        for (int j = 0; j< 15; j++){
 
-            for (int i =0;i< 8*4;i++ ){
+        for(int p =0; p<10; p++) {
 
-                int indexpixel = j * pixelswidth * 4 + i;
-                int indexascii = j * 32 + i;
-                pixels[indexpixel] = asciipixel[indexascii];
+            for (int j = 0; j < 30; j++) { // Height
+
+                for (int k = 0; k < 30; k++) {
+
+
+                    for (int i = 0; i < 18 * 4; i++) { // Width
+                        int indexpixel = (j+18*p) * pixelswidth * 4 + i;
+                     //   int indexpixel = j * pixelswidth * 4 + i;
+                        int indexascii = j * 18 * 4 + i;
+                        pixels[indexpixel + 18 * 4 * k] = asciipixel[indexascii];
+
+                    }
+
+                }
 
             }
         }
 
+        Log.d(TAG,"End");
 
 
-    return pixels;
+        return pixels;
     }
 
 }
