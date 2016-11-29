@@ -10,15 +10,14 @@ import android.util.Log;
 
 public class GaussianBlur {
 
-    ArtTransformService mArt = new ArtTransformService();
+    //ArtTransformService mArt = new ArtTransformService();
 
     String TAG = "GaussianBlur";
 
 
-    public byte[] gblur(byte[] b) {
+    public Bitmap gblur(Bitmap bmp) {
         int r = 3;
         float t = 0.2f;
-        Bitmap bmp= mArt.byteToBmp(b);
         int redValue;
         int blueValue;
         int greenValue;
@@ -26,8 +25,8 @@ public class GaussianBlur {
         //Log.d(TAG, "The red value is "+ String.valueOf(redValue));
 
 
-        for (int x = 0; x < bmp.getHeight(); x++){
-            for(int y = 0; y < bmp.getWidth(); y++){
+        for (int x = 0; x < bmp.getWidth(); x++){
+            for(int y = 0; y < bmp.getHeight(); y++){
 
                 float temp = gKernel(0,t);
                 redValue = (int) (temp * Color.red(bmp.getPixel(x, y)));
@@ -45,8 +44,8 @@ public class GaussianBlur {
             }
         }
 
-        for (int x = 0; x < bmp.getHeight(); x++){
-            for(int y = 0; y < bmp.getWidth(); y++){
+        for (int x = 0; x < bmp.getWidth(); x++){
+            for(int y = 0; y < bmp.getHeight(); y++){
 
                 float temp = gKernel(0,t);
                 redValue = (int) (temp * Color.red(bmp.getPixel(x, y)));
@@ -72,7 +71,7 @@ public class GaussianBlur {
 
         Log.d(TAG, "GaussianBlur Ends");
 
-        return mArt.bmpToByte(bmp);
+        return bmp;
     }
 
     public float gKernel(int k, float t){
