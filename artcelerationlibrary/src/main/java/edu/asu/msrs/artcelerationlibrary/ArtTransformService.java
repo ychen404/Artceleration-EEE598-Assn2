@@ -54,6 +54,7 @@ public class ArtTransformService extends Service {
     public int img_height;
 
     GaussianBlur gaussianBlur = new GaussianBlur();
+    TiltShift tiltShift = new TiltShift();
 
 
     ColorFilter piecewisefilter = new ColorFilter() ;
@@ -97,11 +98,10 @@ public class ArtTransformService extends Service {
                     processed_bytes = mAscii.ascii(bytes);
                     break;
                 case GAUSSIAN_BLUR:
-
-                    processed_bytes = bmpToByte(gaussianBlur.gblur(byteToBmp(bytes),5,1f));
+                    processed_bytes = bmpToByte(gaussianBlur.gblur(byteToBmp(bytes),new int[]{2},new float[]{1f}));
                     break;
                 case TILT_SHIFT:
-                    tiltShift(bytes);
+                    processed_bytes = bmpToByte(tiltShift.tShift(byteToBmp(bytes)));
                     break;
 
                 default:
@@ -244,13 +244,6 @@ public class ArtTransformService extends Service {
     }
 
 
-
-//    public byte[] gaussianBlur(byte[] b){
-//
-//        return b;
-//
-//    }
-//
 
     public byte[] tiltShift(byte[] b){
 
