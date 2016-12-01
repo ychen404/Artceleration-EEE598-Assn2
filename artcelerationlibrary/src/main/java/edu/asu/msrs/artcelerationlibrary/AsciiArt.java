@@ -113,12 +113,14 @@ public class AsciiArt{
 
         for(int p =0; p<31; p++) {  // W/w = 1066/34 , total patch in y direction
             //最外层循环用来控制放入多少行图片
+            //The number of row pixel replace by ascii
             for (int j = 0; j < 34; j++) {
                 //第三层循环用来控制每行图的行像素点
                 for (int k = 0; k < 88; k++) {  // total patch in x direction
                     //第二层循环控制每列图的列像素点
                     for (int i = 0; i < 18 * 4; i++) {
                         //第一层循环:把ascii的一行像素插入对应的图片像素点上
+                        // First loop: replace the row pixel using ascii picture
                         int indexpixel = (j + 34 * p) * pixelswidth * 4 + i;
                         int indexascii = j * 18 * 4 + i;
                         pixels[indexpixel + 18 * 4 * k] = asciipixel[indexascii];
@@ -129,6 +131,7 @@ public class AsciiArt{
 
         getAvg(asciipixel);
         getAvg(char1);
+        Log.d(TAG, "The first patch avg is "+ String.valueOf(getAvg(pixels)));
         int[] avg_ascii = new int[]{getAvg(asciipixel),getAvg(char1),getAvg(char2),getAvg(char3),
                 getAvg(char4),getAvg(char5),getAvg(char6),getAvg(char7),getAvg(char8),getAvg(char9),
                 getAvg(char10),getAvg(char11),getAvg(char12),getAvg(char13),getAvg(char14),getAvg(char15),
@@ -160,8 +163,22 @@ public class AsciiArt{
         }
 
         int avg = argb/(9*17*3);
-                Log.d(TAG,"The avg of the pixel is " + String.valueOf(avg));
+   //             Log.d(TAG,"The avg of the pixel is " + String.valueOf(avg));
         return avg;
     }
+
+//    public int leastMean(byte[] input){
+//        int diff, temp;
+//        diff = Math.abs(getAvg(input) - getAvg(char0));
+//        for (int i =1; i < 32; i++){
+//            temp = Math.abs(getAvg(input) - getAvg(avg_ascii[i]));
+//            if (diff < temp){
+//                return diff;
+//            }
+//            else
+//                return temp;
+//
+//        }
+//    }
 
 }

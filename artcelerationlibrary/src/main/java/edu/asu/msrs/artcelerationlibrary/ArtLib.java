@@ -83,7 +83,7 @@ public class ArtLib {
     }
 
     public String[] getTransformsArray(){
-        String[] transforms = {"Color Filter", "Motion Blur", "ASCII Art", "Gaussian Blur", "Tilt Shift"};
+        String[] transforms = {"Color Filter", "Motion Blur", "Sobel Edge", "Gaussian Blur", "Tilt Shift"};
         return transforms;
     }
 

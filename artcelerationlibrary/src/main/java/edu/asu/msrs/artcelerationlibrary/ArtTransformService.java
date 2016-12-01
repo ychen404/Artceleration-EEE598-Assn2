@@ -44,7 +44,7 @@ public class ArtTransformService extends Service {
 
     static final int COLOR_FILTER   = 0;
     static final int MOTION_BLUR    = 1;
-    static final int ASCII_ART      = 2;
+    static final int SOBEL_EDGE     = 2;
     static final int GAUSSIAN_BLUR  = 3;
     static final int TILT_SHIFT     = 4;
 
@@ -59,7 +59,8 @@ public class ArtTransformService extends Service {
 
     ColorFilter piecewisefilter = new ColorFilter() ;
    // public AsciiArt mAscii;
-    AsciiArt mAscii = new AsciiArt(this);
+   // AsciiArt mAscii = new AsciiArt(this);
+    SobelEdge sobelEdge = new SobelEdge();
 
     class ArtTransformHandler extends Handler{
         @Override
@@ -94,11 +95,11 @@ public class ArtTransformService extends Service {
                 case MOTION_BLUR:
                     processed_bytes = motionBlur(bytes);
                     break;
-                case ASCII_ART:
-                    processed_bytes = mAscii.ascii(bytes);
+                case SOBEL_EDGE:
+                    processed_bytes = bmpToByte(sobelEdge.sEdge(byteToBmp(bytes)));
                     break;
                 case GAUSSIAN_BLUR:
-                    processed_bytes = bmpToByte(gaussianBlur.gblur(byteToBmp(bytes),new int[]{2},new float[]{1f}));
+                    processed_bytes = bmpToByte(gaussianBlur.gblur(byteToBmp(bytes),new int[]{3},new float[]{3f}));
                     break;
                 case TILT_SHIFT:
                     processed_bytes = bmpToByte(tiltShift.tShift(byteToBmp(bytes)));
