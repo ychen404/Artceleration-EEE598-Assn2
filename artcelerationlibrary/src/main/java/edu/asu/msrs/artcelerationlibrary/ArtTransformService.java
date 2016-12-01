@@ -53,8 +53,19 @@ public class ArtTransformService extends Service {
     public int img_width;
     public int img_height;
 
+
+        static {
+        System.loadLibrary("my-native-lib");
+    }
+
+//    public native String StringFromJNI();
+    public native String GaussianFromJNI();
+
+
     GaussianBlur gaussianBlur = new GaussianBlur();
     TiltShift tiltShift = new TiltShift();
+
+
 
 
     ColorFilter piecewisefilter = new ColorFilter() ;
@@ -90,7 +101,7 @@ public class ArtTransformService extends Service {
 
                 case COLOR_FILTER:
                     processed_bytes = colorFilter(bytes);
-
+                    Log.d(TAG,GaussianFromJNI());
                     break;
                 case MOTION_BLUR:
                     processed_bytes = motionBlur(bytes);

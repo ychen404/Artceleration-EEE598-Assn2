@@ -37,13 +37,11 @@ public class ArtLib {
         init();
     }
 
-    static {
-        System.loadLibrary("my-native-lib");
-    }
-
 //    static {
-//        System.loadLibrary("hello-neon");
+//        System.loadLibrary("my-native-lib");
 //    }
+
+
     // To test NEON
     //public native String StringFromJNI();
     //public native String stringFromJNI();
@@ -210,7 +208,7 @@ public class ArtLib {
 
     public Buffer readProcessed(FileInputStream input)
     {
-        //  Log.d(TAG,StringFromJNI()); // Test cpp
+     //   Log.d(TAG,StringFromJNI()); // Test cpp
 
           //Log.d(TAG,stringFromJNI()); // Test neon
 
