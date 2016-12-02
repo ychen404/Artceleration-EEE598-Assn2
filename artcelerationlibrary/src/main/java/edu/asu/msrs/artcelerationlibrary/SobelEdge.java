@@ -85,18 +85,6 @@ public class SobelEdge {
 
     }
 
-//    public void gradient(Bitmap bmp){
-//        for (int x = 300; x < 600; x ++){
-//            for (int y = 300; y < 600; y++){
-//                grx[x][y] = sx[0][0]*gray[x-1][y-1] + sx[0][1]*gray[x][y-1] + sx[0][2]*gray[x+1][y-1]+
-//                        sx[1][0]*gray[x-1][y] + sx[1][1]*gray[x][y] + sx[1][2]*gray[x+1][y]+
-//                        sx[2][0]*gray[x-1][y+1] + sx[2][1]*gray[x][y+1]+ sx[2][2]*gray[x+1][y+1];
-//                bmp.setPixel(x, y, Color.argb(255, grx[x][y], grx[x][y], grx[x][y]));
-//
-//            }
-//        }
-//
-//    }
 
     public void gradient(Bitmap bmp){
         for (int x = 1; x < w-1; x ++){

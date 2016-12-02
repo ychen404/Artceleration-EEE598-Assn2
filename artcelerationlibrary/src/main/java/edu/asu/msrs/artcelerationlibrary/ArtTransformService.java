@@ -64,6 +64,7 @@ public class ArtTransformService extends Service {
 
     GaussianBlur gaussianBlur = new GaussianBlur();
     TiltShift tiltShift = new TiltShift();
+    GaussianBlurByte mGbb = new GaussianBlurByte();
 
 
 
@@ -110,7 +111,8 @@ public class ArtTransformService extends Service {
                     processed_bytes = bmpToByte(sobelEdge.sEdge(byteToBmp(bytes)));
                     break;
                 case GAUSSIAN_BLUR:
-                    processed_bytes = bmpToByte(gaussianBlur.gblur(byteToBmp(bytes),new int[]{3},new float[]{3f}));
+                   // processed_bytes = bmpToByte(gaussianBlur.gblur(byteToBmp(bytes),new int[]{3},new float[]{3f}));
+                    processed_bytes = mGbb.gBlurByte(bytes);
                     break;
                 case TILT_SHIFT:
                     processed_bytes = bmpToByte(tiltShift.tShift(byteToBmp(bytes)));
