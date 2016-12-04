@@ -76,12 +76,18 @@ jbyteArray Java_edu_asu_msrs_artcelerationlibrary_ArtTransformService_GaussianBl
             jobject /* this */,
             jbyteArray array,
             int w,
-            int h) {
+            int h,
+            jintArray args1,
+            jfloatArray args2) {
 
         jbyte* b = env->GetByteArrayElements(array, 0); //pass byte array to pointer
         int length = env-> GetArrayLength(array);
-        float sigma = 3.0;
-        int r = 20;
+        int *intArray = env->GetIntArrayElements(args1, NULL);
+        float *floatArray = env->GetFloatArrayElements(args2, NULL);
+
+
+        //float sigma = 3.0;
+        //int r = 20;
         LOGD("line 83");
         float** red = create2DArray(w,h);
         float** green = create2DArray(w,h);
@@ -93,17 +99,17 @@ jbyteArray Java_edu_asu_msrs_artcelerationlibrary_ArtTransformService_GaussianBl
         convertToInt(b,w,h,red,green,blue);
 
 
-        processOne(red,w,h,sigma,r);
+        processOne(red,w,h,floatArray[0],intArray[0]);
                 LOGD("line 95");
 
-        processTwo(red,w,h,sigma,r);
+        processTwo(red,w,h,floatArray[0],intArray[0]);
                 LOGD("line 98");
 
-        processOne(green,w,h,sigma,r);
-        processTwo(green,w,h,sigma,r);
+        processOne(green,w,h,floatArray[0],intArray[0]);
+        processTwo(green,w,h,floatArray[0],intArray[0]);
 
-        processOne(blue,w,h,sigma,r);
-        processTwo(blue,w,h,sigma,r);
+        processOne(blue,w,h,floatArray[0],intArray[0]);
+        processTwo(blue,w,h,floatArray[0],intArray[0]);
 
 
 

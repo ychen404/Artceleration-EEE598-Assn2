@@ -46,12 +46,14 @@ public class ArtTransformService extends Service {
     static final int MOTION_BLUR    = 1;
     static final int SOBEL_EDGE     = 2;
     static final int GAUSSIAN_BLUR  = 3;
-    static final int ASCII_ART     = 4;
+    static final int ASCII_ART      = 4;
 
 
     private Messenger messenger_2;
     public int img_width;
     public int img_height;
+    public int[] args1;
+    public float[] args2;
 
 
         static {
@@ -60,7 +62,7 @@ public class ArtTransformService extends Service {
 
 //    public native String StringFromJNI();
     public native byte[] ColorFilterFromJNI(byte[] b);
-    public native byte[] GaussianBlurFromJNI(byte[] b, int w, int h);
+    public native byte[] GaussianBlurFromJNI(byte[] b, int w, int h, int[] a1, float[] f1);
 
 
 
@@ -75,6 +77,7 @@ public class ArtTransformService extends Service {
    // public AsciiArt mAscii;
    // AsciiArt mAscii = new AsciiArt(this);
     SobelEdge sobelEdge = new SobelEdge();
+    MotionBlur mMB = new MotionBlur();
 
 
     class ArtTransformHandler extends Handler{
@@ -92,9 +95,14 @@ public class ArtTransformService extends Service {
             int ind = dataBundle.getInt("index");
             img_width = dataBundle.getInt("width");
             img_height = dataBundle.getInt("height");
+            args1 = dataBundle.getIntArray("args1");
+            args2 = dataBundle.getFloatArray("args2");
+
             Log.d(TAG, "The index is " + String.valueOf(ind));
             Log.d(TAG, "The width is " + String.valueOf(img_width));
             Log.d(TAG, "The height is " + String.valueOf(img_height));
+            Log.d(TAG, "The intArg is " + String.valueOf(args1[0]));
+
 
             byte[] bytes = readFully(fios);
             Log.d(TAG,"colorfilter");
@@ -108,14 +116,16 @@ public class ArtTransformService extends Service {
                     processed_bytes = ColorFilterFromJNI(bytes);
                     break;
                 case MOTION_BLUR:
-                    processed_bytes = motionBlur(bytes);
+                   // processed_bytes = motionBlur(bytes);
+                    processed_bytes = mMB.motionBlur(bytes,img_width,img_height,args1);
+
                     break;
                 case SOBEL_EDGE:
-                    processed_bytes = bmpToByte(sobelEdge.sEdge(byteToBmp(bytes)));
+                    processed_bytes = bmpToByte(sobelEdge.sEdge(byteToBmp(bytes),args1));
                     break;
                 case GAUSSIAN_BLUR:
        //             processed_bytes = mGbb.gBlurByte(bytes,img_width,img_height);
-                    processed_bytes = GaussianBlurFromJNI(bytes,img_width,img_height);
+                    processed_bytes = GaussianBlurFromJNI(bytes,img_width,img_height,args1,args2);
 
                     break;
                 case ASCII_ART:
@@ -213,22 +223,12 @@ public class ArtTransformService extends Service {
     }
 
 
-//
-//    public byte[] colorFilter(byte[] b){
-//        Log.d(TAG, "Start color filter");
-//
-//
-//      //  return b;
-//        return piecewisefilter.piecewiseprocess(b);
-//
-//
-//    }
 
     public byte[] motionBlur(byte[] bytes){
 
 
         Log.d(TAG,"MotionBlur");
-        int r = 10;
+        int r = 3;
         int redValue;
         int blueValue;
         int greenValue;
@@ -260,15 +260,6 @@ public class ArtTransformService extends Service {
         return bmpToByte(bmp);
 
     }
-
-
-
-    public byte[] tiltShift(byte[] b){
-
-        return b;
-
-    }
-
 
 
     final Messenger mMessenger = new Messenger(new ArtTransformHandler());

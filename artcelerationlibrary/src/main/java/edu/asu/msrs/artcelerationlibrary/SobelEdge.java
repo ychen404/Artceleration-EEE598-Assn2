@@ -19,11 +19,10 @@ public class SobelEdge {
     int[][] gray;
     int[][] sx;
     int[][] grx;
-    int[][] gry;
-    int[][] gr;
+    int[][] sy;
     String TAG = "SobelEdge";
 
-    public Bitmap sEdge (Bitmap bmp){
+    public Bitmap sEdge (Bitmap bmp, int[] args1){
 
         h = bmp.getHeight();
         w = bmp.getWidth();
@@ -32,15 +31,17 @@ public class SobelEdge {
         bluecontainer = new int[w][h];
         gray = new int[w][h];
         sx = new int[][]{{-1,0,1},{-2,0,2},{-1,0,1}};
+        sy = new int[][]{{-1,-2,-1},{0,0,0},{1,2,1}};
+
         grx = new int[w][h];
-        gry = new int[w][h];
-        gr = new int[w][h];
+//        gry = new int[w][h];
+//        gr = new int[w][h];
 
         Log.d(TAG, "Starts");
         getColorValue(bmp);
         grayScale();
         setGrayScale(bmp);
-        gradient(bmp);
+        gradient(bmp, args1[0]);
 
         Log.d(TAG, "Ends");
 
@@ -86,21 +87,47 @@ public class SobelEdge {
     }
 
 
-    public void gradient(Bitmap bmp){
-        for (int x = 1; x < w-1; x ++){
-            for (int y = 1; y < h-1; y++){
-                grx[x][y] = (-1)*gray[x-1][y-1] + (0)*gray[x][y-1] + (1)*gray[x+1][y-1]+
-                        (-2)*gray[x-1][y] + (0)*gray[x][y] + (2)*gray[x+1][y]+
-                        (-1)*gray[x-1][y+1] + (0)*gray[x][y+1]+ (1)*gray[x+1][y+1];
-                if(grx[x][y] < 0) {
-                    grx[x][y] = 0;
-                } else {
+    public void gradient(Bitmap bmp, int args){
+        switch (args){
+            case 0:
+                for (int x = 1; x < w-1; x ++){
+                    for (int y = 1; y < h-1; y++){
+                        grx[x][y] = (-1)*gray[x-1][y-1] + (0)*gray[x][y-1] + (1)*gray[x+1][y-1]+
+                                (-2)*gray[x-1][y] + (0)*gray[x][y] + (2)*gray[x+1][y]+
+                                (-1)*gray[x-1][y+1] + (0)*gray[x][y+1]+ (1)*gray[x+1][y+1];
+                        if(grx[x][y] < 0) {
+                            grx[x][y] = 0;
+                        } else {
 
+                        }
+                        bmp.setPixel(x, y, Color.argb(255, grx[x][y], grx[x][y], grx[x][y]));
+
+                    }
                 }
-                bmp.setPixel(x, y, Color.argb(255, grx[x][y], grx[x][y], grx[x][y]));
+                break;
+            case 1:
+                for (int x = 1; x < w-1; x ++){
+                    for (int y = 1; y < h-1; y++){
+                        grx[x][y] = (-1)*gray[x-1][y-1] + (-2)*gray[x][y-1] + (1)*gray[x+1][y-1]+
+                                (0)*gray[x-1][y] + (0)*gray[x][y] + (0)*gray[x+1][y]+
+                                (1)*gray[x-1][y+1] + (2)*gray[x][y+1]+ (1)*gray[x+1][y+1];
+                        if(grx[x][y] < 0) {
+                            grx[x][y] = 0;
+                        } else {
 
-            }
+                        }
+                        bmp.setPixel(x, y, Color.argb(255, grx[x][y], grx[x][y], grx[x][y]));
+
+                    }
+                }
+                break;
+            case 2:
+
+                break;
+            default:
+                break;
         }
+
 
     }
 

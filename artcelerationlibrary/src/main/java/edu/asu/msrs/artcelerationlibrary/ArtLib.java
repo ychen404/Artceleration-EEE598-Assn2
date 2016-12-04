@@ -87,11 +87,11 @@ public class ArtLib {
 
     public TransformTest[] getTestsArray(){
         TransformTest[] transforms = new TransformTest[5];
-        transforms[0]=new TransformTest(0, new int[]{1,2,3}, new float[]{0.1f, 0.2f, 0.3f});
-        transforms[1]=new TransformTest(1, new int[]{11,22,33}, new float[]{0.3f, 0.2f, 0.3f});
-        transforms[2]=new TransformTest(2, new int[]{51,42,33}, new float[]{0.5f, 0.6f, 0.3f});
-        transforms[3]=new TransformTest(3, new int[]{51,42,33}, new float[]{0.5f, 0.6f, 0.3f});
-        transforms[4]=new TransformTest(4, new int[]{51,42,33}, new float[]{0.5f, 0.6f, 0.3f});
+        transforms[0]=new TransformTest(0, new int[]{1,2,3}, new float[]{0.1f, 0.2f, 0.3f}); // Color Filter
+        transforms[1]=new TransformTest(1, new int[]{1,4}, new float[]{0.3f, 0.2f, 0.3f}); // Motion Blur
+        transforms[2]=new TransformTest(2, new int[]{0}, new float[]{0.5f}); //Sobel Edge
+        transforms[3]=new TransformTest(3, new int[]{10}, new float[]{6f}); // Gaussian Blur
+        transforms[4]=new TransformTest(4, new int[]{51,42,33}, new float[]{0.5f, 0.6f, 0.3f}); //ASCII Art
 
         return transforms;
     }
@@ -178,12 +178,12 @@ public class ArtLib {
                 dataBundle.putInt("index", reqContainer.index);
                 dataBundle.putInt("width", reqContainer.img_width );
                 dataBundle.putInt("height", reqContainer.img_height );
-                dataBundle.putFloatArray("floatArgs", reqContainer.floatArgs);
-                dataBundle.putIntArray("intArgs", reqContainer.intArgs);
-
+                dataBundle.putIntArray("args1", reqContainer.intArgs);
+                dataBundle.putFloatArray("args2", reqContainer.floatArgs);
 
 
                 Log.d(TAG, "The index is + " + String.valueOf(reqContainer.index));
+                Log.d(TAG, "The int args is " + String.valueOf(reqContainer.intArgs[0]));
                 int what = reqContainer.index;
 
                 Message msg = Message.obtain(null, what);
@@ -212,9 +212,6 @@ public class ArtLib {
 
     public Buffer readProcessed(FileInputStream input)
     {
-     //   Log.d(TAG,StringFromJNI()); // Test cpp
-
-          //Log.d(TAG,stringFromJNI()); // Test neon
 
         byte[] byteArray = null;
         Buffer buf = null;
