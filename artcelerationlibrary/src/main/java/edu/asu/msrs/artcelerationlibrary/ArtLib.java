@@ -81,7 +81,7 @@ public class ArtLib {
     }
 
     public String[] getTransformsArray(){
-        String[] transforms = {"Color Filter", "Motion Blur", "Sobel Edge", "Gaussian Blur", "Tilt Shift"};
+        String[] transforms = {"Color Filter", "Motion Blur", "Sobel Edge", "Gaussian Blur", "ASCII Art"};
         return transforms;
     }
 
@@ -178,6 +178,10 @@ public class ArtLib {
                 dataBundle.putInt("index", reqContainer.index);
                 dataBundle.putInt("width", reqContainer.img_width );
                 dataBundle.putInt("height", reqContainer.img_height );
+                dataBundle.putFloatArray("floatArgs", reqContainer.floatArgs);
+                dataBundle.putIntArray("intArgs", reqContainer.intArgs);
+
+
 
                 Log.d(TAG, "The index is + " + String.valueOf(reqContainer.index));
                 int what = reqContainer.index;

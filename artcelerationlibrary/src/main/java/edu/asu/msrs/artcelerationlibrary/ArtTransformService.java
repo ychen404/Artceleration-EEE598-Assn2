@@ -46,7 +46,7 @@ public class ArtTransformService extends Service {
     static final int MOTION_BLUR    = 1;
     static final int SOBEL_EDGE     = 2;
     static final int GAUSSIAN_BLUR  = 3;
-    static final int TILT_SHIFT     = 4;
+    static final int ASCII_ART     = 4;
 
 
     private Messenger messenger_2;
@@ -59,20 +59,23 @@ public class ArtTransformService extends Service {
     }
 
 //    public native String StringFromJNI();
-    public native String GaussianFromJNI();
-
-
-    GaussianBlur gaussianBlur = new GaussianBlur();
-    TiltShift tiltShift = new TiltShift();
-    GaussianBlurByte mGbb = new GaussianBlurByte();
+    public native byte[] ColorFilterFromJNI(byte[] b);
+    public native byte[] GaussianBlurFromJNI(byte[] b, int w, int h);
 
 
 
+    // GaussianBlur gaussianBlur = new GaussianBlur();
+   // TiltShift tiltShift = new TiltShift();
+  //  GaussianBlurByte mGbb = new GaussianBlurByte();
 
-    ColorFilter piecewisefilter = new ColorFilter() ;
+
+
+
+   // ColorFilter piecewisefilter = new ColorFilter() ;
    // public AsciiArt mAscii;
    // AsciiArt mAscii = new AsciiArt(this);
     SobelEdge sobelEdge = new SobelEdge();
+
 
     class ArtTransformHandler extends Handler{
         @Override
@@ -101,8 +104,8 @@ public class ArtTransformService extends Service {
             switch (msg.what) {
 
                 case COLOR_FILTER:
-                    processed_bytes = colorFilter(bytes);
-                    Log.d(TAG,GaussianFromJNI());
+                   // processed_bytes = colorFilter(bytes);
+                    processed_bytes = ColorFilterFromJNI(bytes);
                     break;
                 case MOTION_BLUR:
                     processed_bytes = motionBlur(bytes);
@@ -111,11 +114,12 @@ public class ArtTransformService extends Service {
                     processed_bytes = bmpToByte(sobelEdge.sEdge(byteToBmp(bytes)));
                     break;
                 case GAUSSIAN_BLUR:
-                   // processed_bytes = bmpToByte(gaussianBlur.gblur(byteToBmp(bytes),new int[]{3},new float[]{3f}));
-                    processed_bytes = mGbb.gBlurByte(bytes);
+       //             processed_bytes = mGbb.gBlurByte(bytes,img_width,img_height);
+                    processed_bytes = GaussianBlurFromJNI(bytes,img_width,img_height);
+
                     break;
-                case TILT_SHIFT:
-                    processed_bytes = bmpToByte(tiltShift.tShift(byteToBmp(bytes)));
+                case ASCII_ART:
+                   // processed_bytes = mAscii.ascii(bytes);
                     break;
 
                 default:
@@ -209,16 +213,16 @@ public class ArtTransformService extends Service {
     }
 
 
-
-    public byte[] colorFilter(byte[] b){
-        Log.d(TAG, "Start color filter");
-
-
-      //  return b;
-        return piecewisefilter.piecewiseprocess(b);
-
-
-    }
+//
+//    public byte[] colorFilter(byte[] b){
+//        Log.d(TAG, "Start color filter");
+//
+//
+//      //  return b;
+//        return piecewisefilter.piecewiseprocess(b);
+//
+//
+//    }
 
     public byte[] motionBlur(byte[] bytes){
 

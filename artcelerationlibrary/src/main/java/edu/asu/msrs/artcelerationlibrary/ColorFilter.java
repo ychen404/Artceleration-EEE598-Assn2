@@ -6,17 +6,15 @@ import android.util.Log;
  * Created by tangmiao on 11/27/2016.
  */
 public class ColorFilter {
-    public byte[] piecewiseprocess(byte[] pixels){
+    public static byte[] piecewiseprocess(byte[] pixels){
         String TAG = "ColorFilter";
         Log.d(TAG,"Start");
 
-//        int [] piecewiseArray = new int[]{1, 2, 100, 155, 200, 210, 255, 255,
-//                1, 5, 101, 130, 201, 240, 254, 254,
-//                2, 2, 102, 102, 202, 202, 253, 253};
+        int [] piecewiseArray = new int[]{1, 2, 100, 155, 200, 210, 255, 255,
+                1, 5, 101, 130, 201, 240, 254, 254,
+                2, 2, 102, 102, 202, 202, 253, 253};
 
-        int [] piecewiseArray = new int[]{5, 26, 30, 80, 100, 150, 170,230,
-                1, 68, 30, 10, 150, 150, 200,
-                30,100, 130, 130, 80, 200, 250, 240, 5};
+
 
         for (int i = 0; i < pixels.length/4; i++) {
             pixels[4*i+1] = ArrayOperater(pixels[4*i+1],0, piecewiseArray);
@@ -29,7 +27,7 @@ public class ColorFilter {
 
     }
 
-    public byte ArrayOperater(byte pixel1,int colorshift, int[] piecewiseArray) {
+    static public byte ArrayOperater(byte pixel1,int colorshift, int[] piecewiseArray) {
 
         int pixel = pixel1 & 0xFF;
 
