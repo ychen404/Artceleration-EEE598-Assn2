@@ -61,7 +61,7 @@ public class ArtTransformService extends Service {
     }
 
 //    public native String StringFromJNI();
-    public native byte[] ColorFilterFromJNI(byte[] b);
+    public native byte[] ColorFilterFromJNI(byte[] b, int[] args);
     public native byte[] GaussianBlurFromJNI(byte[] b, int w, int h, int[] a1, float[] f1);
 
 
@@ -113,7 +113,7 @@ public class ArtTransformService extends Service {
 
                 case COLOR_FILTER:
                    // processed_bytes = colorFilter(bytes);
-                    processed_bytes = ColorFilterFromJNI(bytes);
+                    processed_bytes = ColorFilterFromJNI(bytes,args1);
                     break;
                 case MOTION_BLUR:
                    // processed_bytes = motionBlur(bytes);

@@ -19,6 +19,8 @@ public class SobelEdge {
     int[][] gray;
     int[][] sx;
     int[][] grx;
+    int[][] gry;
+    int[][] gr;
     int[][] sy;
     String TAG = "SobelEdge";
 
@@ -34,8 +36,8 @@ public class SobelEdge {
         sy = new int[][]{{-1,-2,-1},{0,0,0},{1,2,1}};
 
         grx = new int[w][h];
-//        gry = new int[w][h];
-//        gr = new int[w][h];
+        gry = new int[w][h];
+        gr = new int[w][h];
 
         Log.d(TAG, "Starts");
         getColorValue(bmp);
@@ -90,38 +92,52 @@ public class SobelEdge {
     public void gradient(Bitmap bmp, int args){
         switch (args){
             case 0:
+                getGrx();
                 for (int x = 1; x < w-1; x ++){
                     for (int y = 1; y < h-1; y++){
-                        grx[x][y] = (-1)*gray[x-1][y-1] + (0)*gray[x][y-1] + (1)*gray[x+1][y-1]+
-                                (-2)*gray[x-1][y] + (0)*gray[x][y] + (2)*gray[x+1][y]+
-                                (-1)*gray[x-1][y+1] + (0)*gray[x][y+1]+ (1)*gray[x+1][y+1];
-                        if(grx[x][y] < 0) {
-                            grx[x][y] = 0;
-                        } else {
-
-                        }
+//                        grx[x][y] = (-1)*gray[x-1][y-1] + (0)*gray[x][y-1] + (1)*gray[x+1][y-1]+
+//                                (-2)*gray[x-1][y] + (0)*gray[x][y] + (2)*gray[x+1][y]+
+//                                (-1)*gray[x-1][y+1] + (0)*gray[x][y+1]+ (1)*gray[x+1][y+1];
+//                        if(grx[x][y] < 0) {
+//                            grx[x][y] = 0;
+//                        } else {
+//
+//                        }
                         bmp.setPixel(x, y, Color.argb(255, grx[x][y], grx[x][y], grx[x][y]));
-
+//
                     }
                 }
+
                 break;
             case 1:
+                getGry();
                 for (int x = 1; x < w-1; x ++){
                     for (int y = 1; y < h-1; y++){
-                        grx[x][y] = (-1)*gray[x-1][y-1] + (-2)*gray[x][y-1] + (1)*gray[x+1][y-1]+
-                                (0)*gray[x-1][y] + (0)*gray[x][y] + (0)*gray[x+1][y]+
-                                (1)*gray[x-1][y+1] + (2)*gray[x][y+1]+ (1)*gray[x+1][y+1];
-                        if(grx[x][y] < 0) {
-                            grx[x][y] = 0;
-                        } else {
-
-                        }
-                        bmp.setPixel(x, y, Color.argb(255, grx[x][y], grx[x][y], grx[x][y]));
-
+//                        grx[x][y] = (-1)*gray[x-1][y-1] + (-2)*gray[x][y-1] + (1)*gray[x+1][y-1]+
+//                                (0)*gray[x-1][y] + (0)*gray[x][y] + (0)*gray[x+1][y]+
+//                                (1)*gray[x-1][y+1] + (2)*gray[x][y+1]+ (1)*gray[x+1][y+1];
+//                        if(grx[x][y] < 0) {
+//                            grx[x][y] = 0;
+//                        } else {
+//
+//                        }
+                        bmp.setPixel(x, y, Color.argb(255, gry[x][y], gry[x][y], gry[x][y]));
                     }
                 }
                 break;
             case 2:
+                getGrx();
+                getGry();
+                for (int x = 1; x < w-1; x ++) {
+                    for (int y = 1; y < h - 1; y++) {
+
+                        bmp.setPixel(x, y, Color.argb(255, (int)Math.sqrt(grx[x][y]*grx[x][y]),
+                                (int)Math.sqrt(grx[x][y]*grx[x][y]),
+                                (int)Math.sqrt(grx[x][y]*grx[x][y])));
+
+                    }
+
+                }
 
                 break;
             default:
@@ -131,9 +147,41 @@ public class SobelEdge {
 
     }
 
+    public void getGrx(){
+        for (int x = 1; x < w-1; x ++){
+            for (int y = 1; y < h-1; y++){
+                grx[x][y] = (-1)*gray[x-1][y-1] + (0)*gray[x][y-1] + (1)*gray[x+1][y-1]+
+                        (-2)*gray[x-1][y] + (0)*gray[x][y] + (2)*gray[x+1][y]+
+                        (-1)*gray[x-1][y+1] + (0)*gray[x][y+1]+ (1)*gray[x+1][y+1];
+                if(grx[x][y] < 0) {
+                    grx[x][y] = 0;
+                } else {
+
+                }
+            }
+        }
+
+
+    }
+
+    public void getGry(){
+
+        for (int x = 1; x < w-1; x ++){
+            for (int y = 1; y < h-1; y++){
+                        grx[x][y] = (-1)*gray[x-1][y-1] + (-2)*gray[x][y-1] + (1)*gray[x+1][y-1]+
+                                (0)*gray[x-1][y] + (0)*gray[x][y] + (0)*gray[x+1][y]+
+                                (1)*gray[x-1][y+1] + (2)*gray[x][y+1]+ (1)*gray[x+1][y+1];
+                        if(grx[x][y] < 0) {
+                            grx[x][y] = 0;
+                        } else {
+
+                        }
+            }
+        }
 
 
 
 
     }
+ }
 

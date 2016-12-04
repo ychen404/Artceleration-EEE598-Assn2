@@ -87,7 +87,9 @@ public class ArtLib {
 
     public TransformTest[] getTestsArray(){
         TransformTest[] transforms = new TransformTest[5];
-        transforms[0]=new TransformTest(0, new int[]{1,2,3}, new float[]{0.1f, 0.2f, 0.3f}); // Color Filter
+        transforms[0]=new TransformTest(0, new int[]{1, 2, 100, 155, 200, 210, 255, 255,
+                                                    1, 5, 101, 130, 201, 240, 254, 254,
+                                                    2, 2, 102, 102, 202, 202, 253, 253}, new float[]{0.1f, 0.2f, 0.3f}); // Color Filter
         transforms[1]=new TransformTest(1, new int[]{1,4}, new float[]{0.3f, 0.2f, 0.3f}); // Motion Blur
         transforms[2]=new TransformTest(2, new int[]{0}, new float[]{0.5f}); //Sobel Edge
         transforms[3]=new TransformTest(3, new int[]{10}, new float[]{6f}); // Gaussian Blur

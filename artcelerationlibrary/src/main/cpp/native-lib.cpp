@@ -15,19 +15,21 @@ jbyteArray
 Java_edu_asu_msrs_artcelerationlibrary_ArtTransformService_ColorFilterFromJNI(
         JNIEnv *env,
         jobject /* this */,
-        jbyteArray array) {
+        jbyteArray array,
+        jintArray intArgs) {
    // std::string hello = "ColorFilter From NDK";
   //  return env->NewStringUTF(hello.c_str());
     //jbyte* pixels = env->GetByteArrayElements(array,NULL); //pass byte array to pointer
 
     jbyte* pixels = env->GetByteArrayElements(array, 0); //pass byte array to pointer
     int length = env-> GetArrayLength(array);
+    int* piecewiseArray = env->GetIntArrayElements(intArgs,NULL);
     //JString TAG = "ColorFilter";
       //      Log.d(TAG,"Start");
 
-            int piecewiseArray[] = {1, 2, 100, 155, 200, 210, 255, 255,
-                              1, 5, 101, 130, 201, 240, 254, 254,
-                              2, 2, 102, 102, 202, 202, 253, 253};
+//            int piecewiseArray[] = {1, 2, 100, 155, 200, 210, 255, 255,
+//                              1, 5, 101, 130, 201, 240, 254, 254,
+//                              2, 2, 102, 102, 202, 202, 253, 253};
 
 
 
