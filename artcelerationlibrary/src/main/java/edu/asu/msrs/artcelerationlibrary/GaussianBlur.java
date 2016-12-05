@@ -6,6 +6,7 @@ import android.util.Log;
 
 /**
  * Created by yitaochan on 11/27/16.
+ *
  */
 
 public class GaussianBlur {

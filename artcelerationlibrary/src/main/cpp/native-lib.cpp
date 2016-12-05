@@ -1,3 +1,4 @@
+
 #include <jni.h>
 #include <string>
 #include "native-lib.h"
@@ -10,26 +11,26 @@
 #define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,__VA_ARGS__)
 extern "C"
 //jstring
+/**
+ * Created by tangmiao on 11/27/2016.
+ * This transform was basically trans-form the color value of every pixel into another
+ * color value for each channel of RGB image.   The  transform  was  based  on  the  specified
+ * piece-wise  function.   Since  there were three channels, there were also three piecewise functions.
+ * Every piecewise function was given by eight numbers, which represented 4 points(x value and value)
+ * onthe  linear  piece  wise  function  plot.   Since  there  were  three  channels,  we  would  be given
+ * an array including 24 numbers in total.  These number would determine how the original figure will be transformed.
+ */
 jbyteArray
-//Java_edu_asu_msrs_artcelerationlibrary_ArtLib_StringFromJNI(
+
 Java_edu_asu_msrs_artcelerationlibrary_ArtTransformService_ColorFilterFromJNI(
         JNIEnv *env,
         jobject /* this */,
         jbyteArray array,
         jintArray intArgs) {
-   // std::string hello = "ColorFilter From NDK";
-  //  return env->NewStringUTF(hello.c_str());
-    //jbyte* pixels = env->GetByteArrayElements(array,NULL); //pass byte array to pointer
 
     jbyte* pixels = env->GetByteArrayElements(array, 0); //pass byte array to pointer
     int length = env-> GetArrayLength(array);
     int* piecewiseArray = env->GetIntArrayElements(intArgs,NULL);
-    //JString TAG = "ColorFilter";
-      //      Log.d(TAG,"Start");
-
-//            int piecewiseArray[] = {1, 2, 100, 155, 200, 210, 255, 255,
-//                              1, 5, 101, 130, 201, 240, 254, 254,
-//                              2, 2, 102, 102, 202, 202, 253, 253};
 
 
 
@@ -46,7 +47,8 @@ Java_edu_asu_msrs_artcelerationlibrary_ArtTransformService_ColorFilterFromJNI(
 
 
 }
-
+//Input: Original image pixels, different channel indexes, and piecewiseArray
+//Output: all the  image pixels after processed
 jbyte ArrayOperater(jbyte pixel1,int colorshift, int* piecewiseArray) {
 
         int pixel = pixel1 & 0xFF;
@@ -71,7 +73,9 @@ jbyte ArrayOperater(jbyte pixel1,int colorshift, int* piecewiseArray) {
         return  (jbyte)pixel;
     }
 
-
+/*The Gaussian Blur transforms the input pixel values using Gaussian weighted kernelvector.
+The vector is first applied to the x direction and then apply to the y direction.The radius
+determines how many terms are to multiply by the Gaussian weight vector.*/
 extern "C"
 jbyteArray Java_edu_asu_msrs_artcelerationlibrary_ArtTransformService_GaussianBlurFromJNI(
             JNIEnv *env,

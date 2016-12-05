@@ -9,6 +9,9 @@ import java.nio.ByteBuffer;
 
 /**
  * Created by yitaochan on 12/4/16.
+ * The  Motion  Blur  find  the  arithmetic  average  of  the  nearby  pixels.   For  different”radius”,
+ * different number of terms are needed to process.  So first is to find out the sum of the area of interest
+ * and then divided by the number of terms, which is 2*radius+ 1.
  */
 
 public class MotionBlur {
@@ -90,6 +93,7 @@ public class MotionBlur {
 
         return bytes;
     }
+
 
     public Bitmap byteToBmp (byte[] b, int w, int h){
 

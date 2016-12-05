@@ -75,7 +75,7 @@ public class ArtTransformService extends Service {
 
    // ColorFilter piecewisefilter = new ColorFilter() ;
    // public AsciiArt mAscii;
-   // AsciiArt mAscii = new AsciiArt(this);
+    AsciiArt mAscii = new AsciiArt(this);
     SobelEdge sobelEdge = new SobelEdge();
     MotionBlur mMB = new MotionBlur();
 
@@ -129,7 +129,7 @@ public class ArtTransformService extends Service {
 
                     break;
                 case ASCII_ART:
-                   // processed_bytes = mAscii.ascii(bytes);
+                    processed_bytes = mAscii.ascii(bytes);
                     break;
 
                 default:

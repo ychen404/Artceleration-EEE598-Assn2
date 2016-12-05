@@ -5,7 +5,10 @@ import android.graphics.Color;
 import android.util.Log;
 
 /**
- * Created by yitaochan on 11/30/16.
+ * Created by yitaochan on 11/30/16.The  Sobel  Edge  filter  transforms  the  input  image  first
+ * into  a  grayscale  brightnessimage.  Then use different edge filter to high light edges in the image.
+ * By applyingdifferent edge filters, we can obtain the gradients in horizontal and vertical direction.
+ * Once the pixel values are set, we can find the result
  */
 
 public class SobelEdge {
