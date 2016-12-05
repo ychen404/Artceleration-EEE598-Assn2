@@ -39,7 +39,6 @@ Java_edu_asu_msrs_artcelerationlibrary_ArtTransformService_ColorFilterFromJNI(
                 pixels[4*i+2] = ArrayOperater(pixels[4*i+2],8, piecewiseArray);
                 pixels[4*i+3] = ArrayOperater(pixels[4*i+3],16, piecewiseArray);
             }
-            //Log.d(TAG,"End");
 
             env->SetByteArrayRegion (array, 0, length, pixels); // c++ to java, return java
             env->ReleaseByteArrayElements(array, pixels, 0);
@@ -47,6 +46,7 @@ Java_edu_asu_msrs_artcelerationlibrary_ArtTransformService_ColorFilterFromJNI(
 
 
 }
+//Function: transform the pixel values according input args
 //Input: Original image pixels, different channel indexes, and piecewiseArray
 //Output: all the  image pixels after processed
 jbyte ArrayOperater(jbyte pixel1,int colorshift, int* piecewiseArray) {
@@ -92,13 +92,9 @@ jbyteArray Java_edu_asu_msrs_artcelerationlibrary_ArtTransformService_GaussianBl
         float *floatArray = env->GetFloatArrayElements(args2, NULL);
 
 
-        //float sigma = 3.0;
-        //int r = 20;
-        LOGD("line 83");
         float** red = create2DArray(w,h);
         float** green = create2DArray(w,h);
         float** blue = create2DArray(w,h);
-                LOGD("line 87");
 
 
 
@@ -106,10 +102,7 @@ jbyteArray Java_edu_asu_msrs_artcelerationlibrary_ArtTransformService_GaussianBl
 
 
         processOne(red,w,h,floatArray[0],intArray[0]);
-                LOGD("line 95");
-
         processTwo(red,w,h,floatArray[0],intArray[0]);
-                LOGD("line 98");
 
         processOne(green,w,h,floatArray[0],intArray[0]);
         processTwo(green,w,h,floatArray[0],intArray[0]);
@@ -132,14 +125,10 @@ jbyteArray Java_edu_asu_msrs_artcelerationlibrary_ArtTransformService_GaussianBl
                 row++;
             }
         }
-                LOGD("line 121");
-
 
         cleanupArray(red, h);
         cleanupArray(green, h);
         cleanupArray(blue, h);
-
-                LOGD("line 127");
 
 
          env->SetByteArrayRegion (array, 0, length, b); // c++ to java, return java
@@ -148,9 +137,12 @@ jbyteArray Java_edu_asu_msrs_artcelerationlibrary_ArtTransformService_GaussianBl
     }
 
 
+//Function: extracts color values from byte array and stores them into 2d array
+//Input: image byte array, img width, img height, color 2d arrays
+//Output: null
+
 void convertToInt(jbyte* b, int w, int h, float** red, float** green, float** blue) {
         for (int pixel = 0, row = 0, col = 0; pixel < h*w*4; pixel += 4) {
-            //argb += ((int) b[pixel] & 0xff); // alpha
             red[row][col] = b[pixel + 0] & 0xff;
             green[row][col] = b[pixel + 1] & 0xff;
             blue[row][col] = b[pixel + 2] & 0xff;
@@ -162,6 +154,11 @@ void convertToInt(jbyte* b, int w, int h, float** red, float** green, float** bl
         }
     }
 
+
+//Function: creates 2d color array
+//Input: array size
+//Output: 2d array
+
 float** create2DArray(int w, int h){
 
     float** color = new float*[h];
@@ -171,24 +168,28 @@ float** create2DArray(int w, int h){
 }
 
 
+//Function: release 2d color array
+//Input: array size
+//Output: null
+
 void cleanupArray(float** array, int h){
 
 for(int i = 0; i < h; ++i) {
-//    for(int j=0; j<h; j++)
     delete[]  array[i];
 }
 delete [] array;
 
 }
 
+//Function: Gaussian transform step one
+//Input: 2d color array, img width, img height, sigma, radius
+//Output: null
+
 void processOne(float** color, int w, int h, float sigma, int r) {
-       // float temp;
         for (int row = 0; row < h; row++ ){
             for (int col = 0; col < w; col++){
- //               color[row][col] = (int)(color[row][col]*gKernel(0,sigma)/unify(r,sigma));
                 color[row][col] = color[row][col]*gKernel(0,sigma);
 
-                //       temp = color[row][col]*(gKernel(0,sigma)/unify(r,sigma));
                 for (int k = 1; k<=r; k++){
                     if((row < k) || ( row + k >= h)){
                         color[row][col] += 0;
@@ -196,10 +197,6 @@ void processOne(float** color, int w, int h, float sigma, int r) {
                         color[row][col] += color[row+k][col]*(gKernel(k,sigma));
                         color[row][col] += color[row-k][col]*(gKernel(-k,sigma));
 
-//                        temp += (temp*(gKernel(k,sigma)/unify(r,sigma)));
-//                        temp += (temp*(gKernel(-k,sigma)/unify(r,sigma)));
-//                        color[row][col] = (int)temp;
-//                        temp = 0;
                     }
 
                 }
@@ -209,12 +206,15 @@ void processOne(float** color, int w, int h, float sigma, int r) {
     }
 
 
+
+//Function: Gaussian transform step two
+//Input: 2d color array, img width, img height, sigma, radius
+//Output: null
+
      void processTwo(float** color, int w, int h, float sigma,int r) {
-    //    float temp ;
         for (int row = 0; row < h; row++ ){
             for (int col = 0; col < w; col++){
                color[row][col] = color[row][col]*(gKernel(0,sigma));
-//                temp = color[row][col]*(gKernel(0,sigma));
 
                 for (int k = 1; k<=r; k++){
                     if((col < k) || ( col + k >= w)){
@@ -222,10 +222,7 @@ void processOne(float** color, int w, int h, float sigma, int r) {
                     } else{
                         color[row][col] += color[row][col+k]*(gKernel(k,sigma));
                         color[row][col] += color[row][col-k]*(gKernel(-k,sigma));
-//                        temp += (color[row][col]*(gKernel(k,sigma)));
-//                        temp += (color[row][col]*(gKernel(-k,sigma)));
-//                        color[row][col] = (int)temp;
-//                        temp = 0;
+
                     }
 
                 }
@@ -234,6 +231,10 @@ void processOne(float** color, int w, int h, float sigma, int r) {
         }
 
     }
+
+//Function: find Gaussian kernel with given radius and sigma value
+//Input: radius, sigma
+//Output: Gaussian kernel
 
   float gKernel(int k, float t){
 

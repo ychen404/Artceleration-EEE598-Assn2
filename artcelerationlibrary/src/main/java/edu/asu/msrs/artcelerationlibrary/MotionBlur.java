@@ -21,6 +21,11 @@ public class MotionBlur {
 
 
 
+
+    //Function: main method of the class. It calls all the other methods to implement the transform
+    //Input: byte array, img_width, img_height, input int args
+    //Output: byte array after motion blur transform
+
     public byte[] motionBlur(byte[] bytes, int w, int h, int[] args){
 
         Log.d(TAG,"Start");
@@ -84,6 +89,11 @@ public class MotionBlur {
     }
 
 
+
+    //Function: convert bitmap object into byte array
+    //Input: bitmap object
+    //Output: byte array
+
     public byte[] bmpToByte(Bitmap bitmap){
 
         ByteBuffer buffer = ByteBuffer.allocateDirect(bitmap.getByteCount());
@@ -94,6 +104,10 @@ public class MotionBlur {
         return bytes;
     }
 
+
+    //Function: convert byte array into bitmap object
+    //Input: byte array
+    //Output: bitmap object
 
     public Bitmap byteToBmp (byte[] b, int w, int h){
 

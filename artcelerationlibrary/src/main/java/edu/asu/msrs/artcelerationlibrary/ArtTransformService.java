@@ -65,16 +65,6 @@ public class ArtTransformService extends Service {
     public native byte[] GaussianBlurFromJNI(byte[] b, int w, int h, int[] a1, float[] f1);
 
 
-
-    // GaussianBlur gaussianBlur = new GaussianBlur();
-   // TiltShift tiltShift = new TiltShift();
-  //  GaussianBlurByte mGbb = new GaussianBlurByte();
-
-
-
-
-   // ColorFilter piecewisefilter = new ColorFilter() ;
-   // public AsciiArt mAscii;
     AsciiArt mAscii = new AsciiArt(this);
     SobelEdge sobelEdge = new SobelEdge();
     MotionBlur mMB = new MotionBlur();
@@ -112,11 +102,9 @@ public class ArtTransformService extends Service {
             switch (msg.what) {
 
                 case COLOR_FILTER:
-                   // processed_bytes = colorFilter(bytes);
                     processed_bytes = ColorFilterFromJNI(bytes,args1);
                     break;
                 case MOTION_BLUR:
-                   // processed_bytes = motionBlur(bytes);
                     processed_bytes = mMB.motionBlur(bytes,img_width,img_height,args1);
 
                     break;
@@ -124,7 +112,6 @@ public class ArtTransformService extends Service {
                     processed_bytes = bmpToByte(sobelEdge.sEdge(byteToBmp(bytes),args1));
                     break;
                 case GAUSSIAN_BLUR:
-       //             processed_bytes = mGbb.gBlurByte(bytes,img_width,img_height);
                     processed_bytes = GaussianBlurFromJNI(bytes,img_width,img_height,args1,args2);
 
                     break;
@@ -176,9 +163,7 @@ public class ArtTransformService extends Service {
         byte[] byteArray = null;
         try
         {
-            //InputStream inputStream = new FileInputStream(f);
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            //byte[] b = new byte[1600*1066*4];
             byte[] b = new byte[1024*8];
             int bytesRead =0;
 
@@ -220,45 +205,6 @@ public class ArtTransformService extends Service {
         byte[] bytes = buffer.array();
 
         return bytes;
-    }
-
-
-
-    public byte[] motionBlur(byte[] bytes){
-
-
-        Log.d(TAG,"MotionBlur");
-        int r = 3;
-        int redValue;
-        int blueValue;
-        int greenValue;
-        Log.d(TAG,"Timer starts");
-        Bitmap bmp = byteToBmp(bytes);
-        Log.d(TAG,"Timer ends");
-
-        //Log.d(TAG, "Red + blue + green" + String.valueOf(Color.red(bmp.getPixel(100,100)))+ String.valueOf(Color.blue(bmp.getPixel(0,0)) + String.valueOf(Color.green(bmp.getPixel(0,0)))));
-
-        for(int x = r; x<bmp.getWidth()-r; x++) {
-            for (int y = r; y < bmp.getHeight() - r; y++) {
-                redValue = Color.red(bmp.getPixel(x, y));
-                blueValue = Color.blue(bmp.getPixel(x, y));
-                greenValue = Color.green(bmp.getPixel(x, y));
-                for (int k = 1; k <= r; k++) {
-                    redValue += ( Color.red(bmp.getPixel((x - k), y)) + Color.red(bmp.getPixel((x + k), y)));
-                    blueValue += ( Color.blue(bmp.getPixel((x - k), y)) + Color.blue(bmp.getPixel((x + k), y)));
-                    greenValue += ( Color.green(bmp.getPixel((x - k), y)) + Color.green(bmp.getPixel((x + k), y)));
-                }
-                redValue = redValue / (2 * r + 1);
-                blueValue = blueValue / (2 * r + 1);
-                greenValue = greenValue / (2 * r + 1);
-                bmp.setPixel(x, y, Color.argb(255, redValue, greenValue, blueValue));
-
-            }
-        }
-        Log.d(TAG,"END");
-
-        return bmpToByte(bmp);
-
     }
 
 

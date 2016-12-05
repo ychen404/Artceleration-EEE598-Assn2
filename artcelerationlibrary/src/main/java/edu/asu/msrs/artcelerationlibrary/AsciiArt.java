@@ -64,7 +64,7 @@ public class AsciiArt {
 
     byte[][] Asciimage;
 
-    // Method name: bmpToByte
+    // Function: Converts bitmap object into byte array
     // input : bitmap format of image
     // output: Byte array of image
     public byte[] bmpToByte(Bitmap bitmap) {
@@ -185,44 +185,6 @@ public class AsciiArt {
                 getAvg(char22), getAvg(char23), getAvg(char24), getAvg(char25), getAvg(char26), getAvg(char27),
                 getAvg(char28), getAvg(char29), getAvg(char30), getAvg(char31),getAvg(char32), getAvg(char33), getAvg(char34),getAvg(char35)};
 
-//        Log.d(TAG, "Ave char0 =" + String.valueOf(getAvg(char0)));
-//        Log.d(TAG, "Ave char1 =" + String.valueOf(getAvg(char1)));
-//        Log.d(TAG, "Ave char2 =" + String.valueOf(getAvg(char2)));
-//        Log.d(TAG, "Ave char3 =" + String.valueOf(getAvg(char3)));
-//        Log.d(TAG, "Ave char4 =" + String.valueOf(getAvg(char4)));
-//        Log.d(TAG, "Ave char5 =" + String.valueOf(getAvg(char5)));
-//        Log.d(TAG, "Ave char6 =" + String.valueOf(getAvg(char6)));
-//        Log.d(TAG, "Ave char7 =" + String.valueOf(getAvg(char7)));
-//        Log.d(TAG, "Ave char8 =" + String.valueOf(getAvg(char8)));
-//        Log.d(TAG, "Ave char9 =" + String.valueOf(getAvg(char9)));
-//        Log.d(TAG, "Ave char10 =" + String.valueOf(getAvg(char10)));
-//        Log.d(TAG, "Ave char11 =" + String.valueOf(getAvg(char11)));
-//        Log.d(TAG, "Ave char12 =" + String.valueOf(getAvg(char12)));
-//        Log.d(TAG, "Ave char13 =" + String.valueOf(getAvg(char13)));
-//        Log.d(TAG, "Ave char14 =" + String.valueOf(getAvg(char14)));
-//        Log.d(TAG, "Ave char15 =" + String.valueOf(getAvg(char15)));
-//        Log.d(TAG, "Ave char16 =" + String.valueOf(getAvg(char16)));
-//        Log.d(TAG, "Ave char17 =" + String.valueOf(getAvg(char17)));
-//        Log.d(TAG, "Ave char18 =" + String.valueOf(getAvg(char18)));
-//        Log.d(TAG, "Ave char19 =" + String.valueOf(getAvg(char19)));
-//        Log.d(TAG, "Ave char20 =" + String.valueOf(getAvg(char20)));
-//        Log.d(TAG, "Ave char21 =" + String.valueOf(getAvg(char21)));
-//        Log.d(TAG, "Ave char22 =" + String.valueOf(getAvg(char22)));
-//        Log.d(TAG, "Ave char23 =" + String.valueOf(getAvg(char23)));
-//        Log.d(TAG, "Ave char24 =" + String.valueOf(getAvg(char24)));
-//        Log.d(TAG, "Ave char25 =" + String.valueOf(getAvg(char25)));
-//        Log.d(TAG, "Ave char26 =" + String.valueOf(getAvg(char26)));
-//        Log.d(TAG, "Ave char27 =" + String.valueOf(getAvg(char27)));
-//        Log.d(TAG, "Ave char28 =" + String.valueOf(getAvg(char28)));
-//        Log.d(TAG, "Ave char29 =" + String.valueOf(getAvg(char29)));
-//        Log.d(TAG, "Ave char30 =" + String.valueOf(getAvg(char30)));
-//        Log.d(TAG, "Ave char31 =" + String.valueOf(getAvg(char31)));
-//        Log.d(TAG, "Ave char32 =" + String.valueOf(getAvg(char32)));
-//        Log.d(TAG, "Ave char33 =" + String.valueOf(getAvg(char33)));
-//        Log.d(TAG, "Ave char34 =" + String.valueOf(getAvg(char34)));
-//        Log.d(TAG, "Ave char35 =" + String.valueOf(getAvg(char35)));
-
-
 
 
         int patchNumY = (int) Math.floor(1066/34);
@@ -257,7 +219,7 @@ public class AsciiArt {
     }
 
 
-    // calculate the average value of the region with specified region indexes
+    //Function: calculate the average value of the region with specified region indexes
     //input: the index of one region
     //output: the average of that region
     public int PixelimageAve(int startcol, int startrow, byte[] pixels) {
@@ -276,7 +238,7 @@ public class AsciiArt {
 
         return avgpixel;
     }
-    // calculate the average of an ascii image
+    //Function: calculate the average of an ascii image
     //Input:  the byte array of an ascii image
     //Output: the average value of that image
 
@@ -298,7 +260,7 @@ public class AsciiArt {
 
         return avgascii;
     }
-    // find the index of closest average ascii image for each region on the original picture
+    //Function: find the index of closest average ascii image for each region on the original picture
     //input: index of each region, and original picture byte array
     //output: the index of closest average ascii image
     public int findMin(int startcol1, int startrow1, byte[] pixels) {

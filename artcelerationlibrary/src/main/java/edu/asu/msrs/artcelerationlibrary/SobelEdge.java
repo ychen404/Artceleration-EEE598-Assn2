@@ -27,6 +27,9 @@ public class SobelEdge {
     int[][] sy;
     String TAG = "SobelEdge";
 
+    //Function: main method in this class which calls all the other methods to implement the sobel edge transform
+    //Input: bitmap object
+    //Output: bitmap object
     public Bitmap sEdge (Bitmap bmp, int[] args1){
 
         h = bmp.getHeight();
@@ -53,18 +56,24 @@ public class SobelEdge {
         return bmp;
     }
 
+    //Function: extract color values from the bitmap
+    //Input: bitmap object
+    //Output: bitmap object
+
     public void getColorValue(Bitmap bmp){
         for ( int x = 0; x < w; x++){
             for ( int y = 0; y < h; y++){
                 redcontainer [x][y] = Color.red(bmp.getPixel(x, y));
                 greencontainer [x][y] = Color.green(bmp.getPixel(x, y));
                 bluecontainer [x][y] = Color.blue(bmp.getPixel(x, y));
-              //  Log.d(TAG, "RGB"+String.valueOf(redcontainer[x][y])+String.valueOf(greencontainer[x][y])+ String.valueOf(bluecontainer[x][y]));
 
             }
         }
     }
 
+    //Function: convert the color array into grayscale values
+    //Input: void
+    //Output: null
     public void grayScale(){
 
         for (int x = 0; x < w; x++){
@@ -79,6 +88,11 @@ public class SobelEdge {
 
     }
 
+
+    //Function: sets the grayscale values into the image bitmap object
+    //Input: bitmap object
+    //Output: null
+
     public void setGrayScale(Bitmap bmp){
         for (int x = 0; x < w; x++){
             for (int y = 0; y < h; y++){
@@ -91,6 +105,10 @@ public class SobelEdge {
 
     }
 
+    //Function: sets the grx values into the image bitmap object
+    //Input: bitmap object, input args (0: Sx, 1: Sy)
+    //Output: null
+
 
     public void gradient(Bitmap bmp, int args){
         switch (args){
@@ -98,14 +116,7 @@ public class SobelEdge {
                 getGrx();
                 for (int x = 1; x < w-1; x ++){
                     for (int y = 1; y < h-1; y++){
-//                        grx[x][y] = (-1)*gray[x-1][y-1] + (0)*gray[x][y-1] + (1)*gray[x+1][y-1]+
-//                                (-2)*gray[x-1][y] + (0)*gray[x][y] + (2)*gray[x+1][y]+
-//                                (-1)*gray[x-1][y+1] + (0)*gray[x][y+1]+ (1)*gray[x+1][y+1];
-//                        if(grx[x][y] < 0) {
-//                            grx[x][y] = 0;
-//                        } else {
-//
-//                        }
+
                         bmp.setPixel(x, y, Color.argb(255, grx[x][y], grx[x][y], grx[x][y]));
 //
                     }
@@ -116,14 +127,7 @@ public class SobelEdge {
                 getGry();
                 for (int x = 1; x < w-1; x ++){
                     for (int y = 1; y < h-1; y++){
-//                        grx[x][y] = (-1)*gray[x-1][y-1] + (-2)*gray[x][y-1] + (1)*gray[x+1][y-1]+
-//                                (0)*gray[x-1][y] + (0)*gray[x][y] + (0)*gray[x+1][y]+
-//                                (1)*gray[x-1][y+1] + (2)*gray[x][y+1]+ (1)*gray[x+1][y+1];
-//                        if(grx[x][y] < 0) {
-//                            grx[x][y] = 0;
-//                        } else {
-//
-//                        }
+
                         bmp.setPixel(x, y, Color.argb(255, gry[x][y], gry[x][y], gry[x][y]));
                     }
                 }
@@ -150,6 +154,10 @@ public class SobelEdge {
 
     }
 
+    //Function: finds the grx values
+    //Input: void
+    //Output: null
+
     public void getGrx(){
         for (int x = 1; x < w-1; x ++){
             for (int y = 1; y < h-1; y++){
@@ -166,6 +174,10 @@ public class SobelEdge {
 
 
     }
+
+    //Function: finds the gry values
+    //Input: void
+    //Output: null
 
     public void getGry(){
 

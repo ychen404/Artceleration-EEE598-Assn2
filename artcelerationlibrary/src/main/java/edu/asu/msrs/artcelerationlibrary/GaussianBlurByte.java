@@ -61,9 +61,7 @@ public class GaussianBlurByte {
     }
 
     static public void convertToInt(byte[] b, int w, int h, float[][] red, float[][] green, float[][] blue) {
-  // static public void convertToInt(byte[] b, int w, int h, int[][] red, int[][] green, int[][] blue) {
         for (int pixel = 0, row = 0, col = 0; pixel < h*w*4; pixel += 4) {
-            //argb += ((int) b[pixel] & 0xff); // alpha
             red[row][col] = (b[pixel + 0] & 0xff);
             green[row][col] = (b[pixel + 1] & 0xff);
             blue[row][col] = (b[pixel + 2] & 0xff);
