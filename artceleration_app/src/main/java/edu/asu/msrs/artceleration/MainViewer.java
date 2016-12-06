@@ -73,7 +73,7 @@ public class MainViewer extends AppCompatActivity {
 
                     makeToast("Transform requested : "+ transforms[t.transformType]);
                 }else{
-                    makeToast("Transform request failed"+ transforms[t.transformType]);
+                    makeToast("Transform request failed "+ transforms[t.transformType]);
                 }
             }
 
